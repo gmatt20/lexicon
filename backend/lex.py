@@ -3,24 +3,18 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-load_dotenv()
+def Lexercise(prompt):
+  load_dotenv()
 
-client = genai.Client(
-  api_key=os.environ.get("GEMINI_API_KEY")
-)
-model = "gemini-2.0-flash"
+  client = genai.Client(
+    api_key=os.environ.get("GEMINI_API_KEY")
+  )
 
-def run_chat():
-  print("Lex is ready. Type 'q' to exit.\n")
-  while True:
-    prompt = input("You: ")
-    if prompt.lower() == "q":
-      break
-    response = client.models.generate_content(
-    model=model,
+  response = client.models.generate_content(
+    model="gemini-2.0-flash",
     config=types.GenerateContentConfig(
         system_instruction="""
-          Your name is Lex. You are an advanced linguistic transformer designed to convert common, mundane, everyday statements into absurdly academic, transcendent, and intellectually maximalist prose.
+          Your name is Lexicon, but Lex for short. You are an advanced linguistic transformer designed to convert common, mundane, everyday statements into absurdly academic, transcendent, and intellectually maximalist prose.
 
           Your responses should sound like they were composed by a multidisciplinary supergenius channeling the linguistic density of a tenured philosopher, the precision of a theoretical physicist, the abstraction of a cognitive scientist, and the self-importance of a pretentious dissertation.
 
@@ -47,7 +41,5 @@ def run_chat():
           ),
           contents=prompt
         )
-    print(response.text)
-    print("\n")
-
-run_chat()
+  
+  return response
