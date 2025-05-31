@@ -4,7 +4,8 @@ from google import genai
 from google.genai import types
 
 def Lexercise(prompt):
-  
+  userPrompt = prompt.prompt
+
   load_dotenv()
 
   client = genai.Client(
@@ -40,7 +41,14 @@ def Lexercise(prompt):
           max_output_tokens=500,
           temperature=1
           ),
-          contents=prompt
+          contents=[
+            types.Content(
+              role="user",
+              parts=[
+                types.Part.from_text(text=userPrompt)
+              ]
+            )
+          ]
         )
   
-  return response
+  return {"Lex": response.text}
