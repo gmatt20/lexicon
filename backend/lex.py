@@ -4,6 +4,7 @@ from google import genai
 from google.genai import types
 
 def Lexercise(prompt):
+  
   load_dotenv()
 
   client = genai.Client(

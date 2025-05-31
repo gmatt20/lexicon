@@ -1,7 +1,9 @@
-from typing import Union
 from fastapi import FastAPI
 from lex import Lexercise
 from pydantic import BaseModel
+
+class Prompt(BaseModel):
+  prompt: str
 
 app = FastAPI()
 
@@ -9,6 +11,7 @@ app = FastAPI()
 def read_root():
   return{"Hello": "World"}
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-  return {"item_id": item_id, "q": q}
+@app.post("/lexercise")
+def to_lex(prompt: Prompt):
+  response = Lexercise(prompt)
+  return response
