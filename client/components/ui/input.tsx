@@ -1,11 +1,12 @@
 import * as React from "react"
+import { Button } from "@/components/ui/button";
 import { CircleArrowUp } from "lucide-react";
 
 import { cn } from "@/lib/utils"
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
-    <div>
+    <div className="flex">
       <input
         type={type}
         data-slot="input"
@@ -17,7 +18,9 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         )}
         {...props}
       />
-      <CircleArrowUp />
+      <Button>
+        <CircleArrowUp />
+      </Button>
     </div>
   );
 }
