@@ -1,6 +1,7 @@
 from typing import Union
 from fastapi import FastAPI
 from lex import Lexercise
+from pydantic import BaseModel
 
 app = FastAPI()
 
