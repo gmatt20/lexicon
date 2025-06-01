@@ -2,12 +2,27 @@
 
 import { Input } from "@/components/ui/input";
 import { ToLex } from "@/lib/ToLex";
-
+import { useState } from "react";
 
 export default function InputChat() {
+  const [LexResponse, setLexResponse] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const formJson = Object.fromEntries(formData.entries());
+
+    const Lex = await ToLex(JSON.stringify(formJson));
+
+    setLexResponse(Lex);
+  };
+
   return (
     <div className="fixed bottom-0 w-full bg-white p-5">
-      <form method="post" onSubmit={ToLex}>
+      <p>{LexResponse}</p>
+      <form method="post" onSubmit={handleSubmit}>
         <Input
           type="text"
           name="prompt"
