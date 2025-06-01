@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from lex import Lexercise
 from pydantic import BaseModel
+import asyncio
 
 class Prompt(BaseModel):
   prompt: str
@@ -34,6 +35,8 @@ async def ws_endpoint(websocket: WebSocket):
   await websocket.accept()
   while True:
     data = await websocket.receive_text()
-    print(data)
     response = Lexercise(data)
-    await websocket.send_text(response["Lex"])
+    LexResponse = response["Lex"]
+    for word in LexResponse.split():
+      await websocket.send_text(word + " ")
+      await asyncio.sleep(0.1)
