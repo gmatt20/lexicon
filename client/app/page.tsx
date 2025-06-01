@@ -7,6 +7,7 @@ import { ChatMessage } from "@/types/ChatMessage";
 
 export default function Home() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const latestMessageRef = useRef<HTMLDivElement>(null);
 
   const ws = useRef<WebSocket | null>(null);
 
@@ -38,6 +39,12 @@ export default function Home() {
       ws.current?.close();
     };
   }, []);
+  
+  useEffect(() => {
+    if(latestMessageRef.current){
+      latestMessageRef.current.scrollIntoView();
+    }
+  }, [messages]);
 
   const handleTextMessage = (e: React.FormEvent<HTMLFormElement>) => {
     const form = document.getElementById("form") as HTMLFormElement;
@@ -60,6 +67,7 @@ export default function Home() {
           <ChatBubble msg={msg} key={i} />
         ))}
       </div>
+      <div ref={latestMessageRef}></div>
       <form method="post" id="form" onSubmit={handleTextMessage}>
         <InputChat />
       </form>
