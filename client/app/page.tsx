@@ -30,7 +30,7 @@ export default function Home() {
         return [...prev, { role: "lex", content: word }];
       });
     };
-    ws.current.close = () => {
+    ws.current.onclose = () => {
       console.log("WebsSocker closed");
     };
 
