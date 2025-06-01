@@ -1,12 +1,11 @@
-import * as React from "react"
-import { Button } from "@/components/ui/button";
+import * as React from "react";
 import { CircleArrowUp } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
-    <div className="flex">
+    <div className="flex items-center relative m-5">
       <input
         type={type}
         data-slot="input"
@@ -18,11 +17,9 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         )}
         {...props}
       />
-      <Button>
-        <CircleArrowUp />
-      </Button>
+      <CircleArrowUp className="absolute right-0 m-1 cursor-pointer" />
     </div>
   );
 }
 
-export { Input }
+export { Input };
