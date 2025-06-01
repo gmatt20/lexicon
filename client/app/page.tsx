@@ -3,12 +3,10 @@
 import ChatBubble from "@/components/ChatBubble";
 import InputChat from "@/components/InputChat";
 import { useState, useEffect, useRef } from "react";
+import { ChatMessage } from "@/types/ChatMessage";
 
 export default function Home() {
-  type ChatMessage = {
-    role: "user" | "lex";
-    content: string;
-  }
+  
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
