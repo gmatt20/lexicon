@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from lex import Lexercise
 from pydantic import BaseModel
@@ -28,3 +28,12 @@ def read_root():
 def to_lex(prompt: Prompt):
   response = Lexercise(prompt)
   return response
+
+@app.websocket("/ws")
+async def ws_endpoint(websocket: WebSocket):
+  await websocket.accept()
+  while True:
+    data = await websocket.receive_text()
+    print(data)
+    response = Lexercise(data)
+    await websocket.send_text(response["Lex"])
