@@ -17,7 +17,9 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         )}
         {...props}
       />
-      <CircleArrowUp className="absolute right-0 m-1 cursor-pointer" />
+      <button className="absolute right-0 m-1 cursor-pointer" type="submit">
+        <CircleArrowUp />
+      </button>
     </div>
   );
 }
