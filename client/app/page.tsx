@@ -6,8 +6,6 @@ import { useState, useEffect, useRef } from "react";
 import { ChatMessage } from "@/types/ChatMessage";
 
 export default function Home() {
-  
-
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   const ws = useRef<WebSocket | null>(null);
@@ -45,7 +43,7 @@ export default function Home() {
     const form = document.getElementById("form") as HTMLFormElement;
     e.preventDefault();
     const input = e.currentTarget.elements.namedItem(
-      "messageText"
+      "messageText",
     ) as HTMLInputElement;
     const value = input.value.trim();
     if (ws.current?.readyState === WebSocket.OPEN) {
