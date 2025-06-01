@@ -4,7 +4,7 @@ import InputChat from "@/components/InputChat";
 export default function Home() {
   return (
     <div className="h-screen w-screen">
-      <div className="pb-32">
+      <div className="pt-10 pb-32">
         {[...Array(20)].map((_, i) => (
           <ChatBubble key={i} />
         ))}
