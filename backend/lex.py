@@ -21,7 +21,7 @@ def Lexercise(prompt):
     model="gemini-2.0-flash",
     config=types.GenerateContentConfig(
         system_instruction=LexPersonality,
-          max_output_tokens=300,
+          max_output_tokens=200,
           temperature=1
           ),
           contents=[

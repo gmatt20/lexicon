@@ -15,9 +15,9 @@ export default function ChatBubble({ msg }: Props) {
     <div className="flex flex-col justify-between mx-10">
       {msg.role === "user" ? (
         <div className="flex justify-end items-end my-5">
-          <Card className="bg-primary-foreground text-black w-fit">
+          <Card className="bg-primary-foreground text-black w-fit ">
             <CardContent>
-              <p>{msg.content}</p>
+              <p className="leading-7">{msg.content}</p>
             </CardContent>
           </Card>
           <Avatar>
@@ -31,9 +31,9 @@ export default function ChatBubble({ msg }: Props) {
             <AvatarImage src={Lexicon.src} />
             <AvatarFallback>LX</AvatarFallback>
           </Avatar>
-          <Card className="bg-primary text-white w-fit">
+          <Card className="bg-primary text-white max-w-[70%]">
             <CardContent>
-              <p>{msg.content}</p>
+              <p className="leading-7">{msg.content}</p>
             </CardContent>
           </Card>
         </div>

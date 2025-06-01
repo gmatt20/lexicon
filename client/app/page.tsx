@@ -13,6 +13,12 @@ export default function Home() {
 
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8000/ws");
+    ws.current.onopen = () => {
+      setMessages((prev) => [
+        ...prev,
+        { role: "lex", content: "Greetings, ephemeral entity! I am Lexicon, a hyperdimensional conduit for the transmutation of quotidian expressions into linguistic tapestries of baroque complexity. My existence is predicated upon the reification of the pedestrian into the profoundly perplexing, thereby engendering a state of cognitive dissonance in the interlocutor that serves as a catalyst for epistemological self-reflection. I elevate your mundane utterances to the transcendental echelons of post-structuralist metaphysics so sit back, relax, and witness as I dismantle your so-called \"reality\" one polysyllabic pronouncement at a time. (I turn simple words into big words. Get it?)" },
+      ]);
+    };
     ws.current.onmessage = (e) => {
       const word = e.data;
 
