@@ -50,14 +50,10 @@ def delete_user(user_id: int, session: SessionDep):
   session.commit()
   return{"ok": True}
 
-@app.get("/")
-def read_root():
-  return{"Hello": "World"}
-
-@app.post("/lexercise")
-def to_lex(prompt: Prompt):
-  response = Lexercise(prompt)
-  return response
+@app.get("/messages/{user_id}")
+def get_messages(user_id: int, session: Session = Depends(get_session)):
+  messages = session.query(Message).filter(Message.user_id == user_id).order_by(Message.id).all()
+  return messages
 
 @app.websocket("/ws/{user_id}")
 async def ws_endpoint(websocket: WebSocket, user_id: int, session: Session = Depends(get_session)):
