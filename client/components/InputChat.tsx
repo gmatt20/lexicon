@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 
 export default function InputChat() {
   return (
-    <div className="fixed bottom-0 w-full bg-white p-5">
+    <div className="fixed bottom-0 w-full bg-white p-5 shadow-2xl/500">
       <Input
         type="text"
         name="messageText"

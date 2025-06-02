@@ -12,7 +12,7 @@ export default function Home() {
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:8000/ws");
+    ws.current = new WebSocket("ws://localhost:8000/ws/1");
     ws.current.onopen = () => {
       setMessages((prev) => [
         ...prev,
