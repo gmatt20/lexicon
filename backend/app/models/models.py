@@ -14,6 +14,7 @@ class Conversation(SQLModel, table=True):
   title: str | None = Field(default="New Chat")
   user: User | None = Relationship(back_populates="conversations")
   messages: list["Message"] = Relationship(back_populates="conversation")
+
 class Message(SQLModel, table=True):
   id: int | None = Field(default=None, primary_key=True)
   user_id: int | None = Field(foreign_key="user.id")
