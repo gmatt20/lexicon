@@ -50,7 +50,14 @@ def delete_user(user_id: int, session: SessionDep):
   session.commit()
   return{"ok": True}
 
-@app.get("/messages/{user_id}")
+@app.post("/message/")
+def post_message(message: Message, session: SessionDep) -> Message:
+  session.add(message)
+  session.commit()
+  session.refresh(message)
+  return message
+
+@app.get("/messages/")
 def get_messages(user_id: int, session: Session = Depends(get_session)):
   messages = session.query(Message).filter(Message.user_id == user_id).order_by(Message.id).all()
   return messages

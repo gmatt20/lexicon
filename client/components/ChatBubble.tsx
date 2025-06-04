@@ -15,7 +15,7 @@ export default function ChatBubble({ msg }: Props) {
     <div className="flex flex-col justify-between mx-10">
       {msg.role === "user" ? (
         <div className="flex justify-end items-end my-5">
-          <Card className="bg-primary-foreground text-black w-fit ">
+          <Card className="bg-primary-foreground text-black max-w-[70%]">
             <CardContent>
               <p className="leading-7">{msg.content}</p>
             </CardContent>

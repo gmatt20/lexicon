@@ -7,7 +7,7 @@ import os
 load_dotenv()
 
 psql_url = os.getenv("PSQL_URL")
-engine = create_engine(psql_url)
+engine = create_engine(psql_url,)
 
 def create_db_and_tables():
   SQLModel.metadata.create_all(engine)
