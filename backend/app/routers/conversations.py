@@ -4,6 +4,7 @@ from models.models import Conversation, User
 from sqlmodel import select
 from typing import Annotated
 from pydantic import BaseModel
+from services.userExists import user_exists
 
 router = APIRouter()
 
@@ -13,9 +14,9 @@ class ConversationData(BaseModel):
 
 @router.post("/conversation/")
 def new_conversation(conversation: ConversationData, session: SessionDep) -> Conversation:
-  user = session.get(User, conversation.user_id)
-  if not user:
+  if not user_exists(session.get(User, conversation.user_id), session):
     raise HTTPException(status_code=404, detail="User not found")
+  
   conversation = Conversation(user_id=conversation.user_id, title=conversation.title)
   session.add(conversation)
   session.commit()

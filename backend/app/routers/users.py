@@ -3,6 +3,8 @@ from db.engine import SessionDep
 from models.models import User
 from sqlmodel import select
 from typing import Annotated
+from services.userExists import user_exists
+from services.conversationExists import conversation_exists
 
 router = APIRouter()
 
