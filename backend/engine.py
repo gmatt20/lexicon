@@ -10,6 +10,7 @@ psql_url = os.getenv("PSQL_URL")
 engine = create_engine(psql_url,)
 
 def create_db_and_tables():
+  # SQLModel.metadata.drop_all(engine)
   SQLModel.metadata.create_all(engine)
 
 def get_session():
