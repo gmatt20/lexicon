@@ -6,6 +6,12 @@ from typing import Annotated
 from pydantic import BaseModel
 from services.userExists import user_exists
 
+# TURD: Complete the CRUD
+# TODO:
+# - Update conversation
+# - Protected get specific conversation
+# - Protected delete specific conversations including its messages
+
 router = APIRouter()
 
 class ConversationData(BaseModel):

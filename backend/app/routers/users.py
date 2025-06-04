@@ -6,6 +6,11 @@ from typing import Annotated
 from services.userExists import user_exists
 from services.conversationExists import conversation_exists
 
+# TURD: Complete the CRUD
+# TODO:
+# - Update user
+# - Get specific user
+
 router = APIRouter()
 
 @router.post("/users/")

@@ -6,6 +6,11 @@ from typing import Annotated
 from services.userExists import user_exists
 from services.conversationExists import conversation_exists
 
+# TURD: Complete the CRUD
+# TODO:
+# - Update message
+# - Delete a single message
+
 router = APIRouter()
 
 # Posts a message
@@ -22,7 +27,7 @@ def get_all_messages(session: SessionDep, offset: int = 0, limit: Annotated[int,
   messages = session.exec(select(Message).offset(offset).limit(limit)).all()
   return messages
 
-# Gets a message from a particular user and conversation
+# Gets messages from a particular user and conversation
 @router.get("/messages/{user_id}/{conversation_id}")
 def get_convo_messages(user_id: int, conversation_id: int, session: SessionDep, offset: int = 0, limit: Annotated[int, Query(le=100)] = 100, ) -> list[Message]:
   if not user_exists(user_id, session):
