@@ -1,22 +1,28 @@
 from sqlmodel import Field, SQLModel, Relationship
+from datetime import datetime
 
-# TURD: Need to add time created, Google ID from oauth, email, password
-# TURD: and profile picture
 class User(SQLModel, table=True):
   # Marks the user ID as required in the database
   # and the database will generate a unique ID
   id: int | None = Field(default=None, primary_key=True)
-  username: str = Field(index=True)
+  username: str = Field(default=None)
+  email: str = Field(index=True, unique=True)
   hashed_password: str | None = Field(default=None)
+  auth_provider: str = Field(default="local") # or "google"
+  profile_picture: str | None = Field(default=None)
+  time_created: datetime = Field(default_factory=datetime.utcnow)
+  google_id: str | None = Field(default=None)
+  # Relationships
   messages: list["Message"] = Relationship(back_populates="user")
   conversations: list["Conversation"] = Relationship(back_populates="user")
-  auth_provider: str = Field(default="local")
 
 # TURD: Need to add time created
 class Conversation(SQLModel, table=True):
   id: int | None = Field(default=None, primary_key=True)
-  user_id: int | None = Field(foreign_key="user.id")
+  user_id: int = Field(foreign_key="user.id")
   title: str | None = Field(default="New Chat")
+  time_created: datetime = Field(default_factory=datetime.utcnow)
+  # Relationships
   user: User | None = Relationship(back_populates="conversations")
   messages: list["Message"] = Relationship(back_populates="conversation")
 
@@ -24,8 +30,10 @@ class Conversation(SQLModel, table=True):
 class Message(SQLModel, table=True):
   id: int | None = Field(default=None, primary_key=True)
   user_id: int | None = Field(foreign_key="user.id")
-  user: User | None = Relationship(back_populates="messages")
   conversation_id: int | None = Field(foreign_key="conversation.id")
-  conversation: Conversation = Relationship(back_populates="messages")
   role: str
   content: str
+  time_created: datetime = Field(default_factory=datetime.utcnow)
+  # Relationships
+  user: User | None = Relationship(back_populates="messages")
+  conversation: Conversation = Relationship(back_populates="messages")
