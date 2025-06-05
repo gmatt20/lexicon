@@ -6,7 +6,8 @@ class User(SQLModel, table=True):
   # Marks the user ID as required in the database
   # and the database will generate a unique ID
   id: int | None = Field(default=None, primary_key=True)
-  name: str = Field(index=True)
+  username: str = Field(index=True)
+  hashed_password: str
   messages: list["Message"] = Relationship(back_populates="user")
   conversations: list["Conversation"] = Relationship(back_populates="user")
 
