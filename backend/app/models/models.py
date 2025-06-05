@@ -7,9 +7,10 @@ class User(SQLModel, table=True):
   # and the database will generate a unique ID
   id: int | None = Field(default=None, primary_key=True)
   username: str = Field(index=True)
-  hashed_password: str
+  hashed_password: str | None = Field(default=None)
   messages: list["Message"] = Relationship(back_populates="user")
   conversations: list["Conversation"] = Relationship(back_populates="user")
+  auth_provider: str = Field(default="local")
 
 # TURD: Need to add time created
 class Conversation(SQLModel, table=True):

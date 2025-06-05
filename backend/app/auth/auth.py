@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 import os
 from sqlmodel import select
 from models.models import User
+import requests
 
 router = APIRouter(
   prefix="/auth",
@@ -20,8 +21,11 @@ router = APIRouter(
 
 load_dotenv()
 
-secret_key = os.getenv("SECRET_KEY")
-algorithm = os.getenv("ALGORITHM")
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
 
 # Password enconder and decoder
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -52,6 +56,8 @@ async def login_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Dep
   user = authenticate_user(form_data.username, form_data.password, session)
   if not user:
     raise HTTPException(status_code=404, detail="Could not validate user")
+  if user.auth_provider != "local":
+    raise HTTPException(403, "Please log in using Google.")
   token = create_access_token(user.username, user.id, timedelta(minutes=20))
 
   return {"access_token": token, "token_type": "bearer"}
@@ -68,11 +74,11 @@ def create_access_token(username: str, user_id: int, expires_delta: timedelta):
   encode = {"sub": username, "id": user_id}
   expires = datetime.utcnow() + expires_delta
   encode.update({"exp": expires})
-  return jwt.encode(encode, secret_key, algorithm=algorithm)
+  return jwt.encode(encode, SECRET_KEY, ALGORITHM=ALGORITHM)
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
   try:
-    payload = jwt.decode(token, secret_key, algorithms=[algorithm])
+    payload = jwt.decode(token, SECRET_KEY, ALGORITHMs=[ALGORITHM])
     username: str = payload.get("sub")
     user_id: int = payload.get("id")
     if username is None or user_id is None:
@@ -80,3 +86,57 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
     return {"username": username, "id": user_id}
   except JWTError:
     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user.")
+  
+@router.get("/login/google")
+async def login_google():
+  return{"url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline"}
+
+router.get("/auth/google")
+async def auth_google(code: str, session: SessionDep):
+  token_resp = requests.post(
+        "https://oauth2.googleapis.com/token",
+        data={
+            "code": code,
+            "client_id": GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "redirect_uri": GOOGLE_REDIRECT_URI,
+            "grant_type": "authorization_code",
+        },
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+
+  if token_resp.status_code != 200:
+        raise HTTPException(status_code=400, detail="Failed to get token from Google")
+
+  token_data = token_resp.json()
+  id_token = token_data.get("id_token")
+  access_token = token_data.get("access_token")
+
+  if not id_token or not access_token:
+      raise HTTPException(status_code=400, detail="Missing tokens in Google response")
+
+  user_info_resp = requests.get(
+        "https://www.googleapis.com/oauth2/v1/userinfo",
+        params={"access_token": access_token}
+    )
+
+  if user_info_resp.status_code != 200:
+      raise HTTPException(status_code=400, detail="Failed to fetch user info")
+
+  user_info = user_info_resp.json()
+  email = user_info.get("email")
+
+  if not email:
+      raise HTTPException(status_code=400, detail="Google account has no email")
+
+  # Step 3: Check or create user
+  user = session.exec(select(User).where(User.username == email)).first()
+  if not user:
+      user = User(username=email, hashed_password=None, auth_provider="google")  # Dummy value
+      session.add(user)
+      session.commit()
+      session.refresh(user)
+
+  # Step 4: Create JWT
+  jwt_token = create_access_token(user.username, user.id, timedelta(minutes=30))
+  return {"access_token": jwt_token, "token_type": "bearer"}
