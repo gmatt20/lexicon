@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import RedirectResponse
 from datetime import timedelta, datetime
 from typing import Annotated
 from pydantic import BaseModel
@@ -89,7 +90,13 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
   
 @router.get("/login/google")
 async def login_google():
-  return{"url": f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={GOOGLE_CLIENT_ID}&redirect_uri={GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline"}
+  google_url = (
+        f"https://accounts.google.com/o/oauth2/auth?"
+        f"response_type=code&client_id={GOOGLE_CLIENT_ID}"
+        f"&redirect_uri={GOOGLE_REDIRECT_URI}"
+        f"&scope=openid%20profile%20email&access_type=offline"
+    )
+  return RedirectResponse(url=google_url)
 
 router.get("/auth/google")
 async def auth_google(code: str, session: SessionDep):

@@ -9,6 +9,10 @@ export default function Home() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const latestMessageRef = useRef<HTMLDivElement>(null);
 
+  const handleClick = async () => {
+    console.log("TURD")
+  }
+
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -77,6 +81,7 @@ export default function Home() {
       <form method="post" id="form" onSubmit={handleTextMessage}>
         <InputChat />
       </form>
+      <button onClick={handleClick}>CONTINUE WITH GOOGLE</button>
     </div>
   );
 }
