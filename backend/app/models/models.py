@@ -5,18 +5,14 @@ class User(SQLModel, table=True):
   # Marks the user ID as required in the database
   # and the database will generate a unique ID
   id: int | None = Field(default=None, primary_key=True)
-  username: str = Field(default=None)
-  email: str = Field(index=True, unique=True)
-  hashed_password: str | None = Field(default=None)
-  auth_provider: str = Field(default="local") # or "google"
+  supabase_user_id: str = Field(index=True, unique=True)
+  username: str | None = Field(default=None)
   profile_picture: str | None = Field(default=None)
-  time_created: datetime = Field(default_factory=datetime.utcnow)
-  google_id: str | None = Field(default=None)
+  is_guest: bool = Field(default=False)
   # Relationships
   messages: list["Message"] = Relationship(back_populates="user")
   conversations: list["Conversation"] = Relationship(back_populates="user")
 
-# TURD: Need to add time created
 class Conversation(SQLModel, table=True):
   id: int | None = Field(default=None, primary_key=True)
   user_id: int = Field(foreign_key="user.id")
@@ -26,7 +22,6 @@ class Conversation(SQLModel, table=True):
   user: User | None = Relationship(back_populates="conversations")
   messages: list["Message"] = Relationship(back_populates="conversation")
 
-# TURD: Need to add time created
 class Message(SQLModel, table=True):
   id: int | None = Field(default=None, primary_key=True)
   user_id: int | None = Field(foreign_key="user.id")

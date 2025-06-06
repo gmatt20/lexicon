@@ -1,70 +1,107 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from starlette import status
 from db.engine import SessionDep
 from pydantic import BaseModel
 from models.models import User
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from passlib.context import CryptContext
-from typing import Annotated
-from datetime import timedelta
-from services.authenticate_user import authenticate_user
-from services.create_access_token import create_access_token
 from db.engine import supabase
+from sqlmodel import select
 
 router = APIRouter(
   prefix="/auth",
   tags=["auth"]
 )
-
-class CreateUserRequest(BaseModel):
-  username: str
+class UserReq(BaseModel):
   email: str
   password: str
+
+class GuestReq(BaseModel):
+  username: str
+
+class DeleteAcc(BaseModel):
+   id: int
 
 class Token(BaseModel):
   access_token: str
   token_type: str
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
-
-@router.post("/test", status_code=status.HTTP_201_CREATED)
-def create_user(user: CreateUserRequest):
-  supabase.auth.sign_up(
+@router.post("/sign-up", status_code=status.HTTP_201_CREATED)
+def sign_up(user: UserReq, session: SessionDep):
+  response = supabase.auth.sign_up(
     {
       "email": user.email,
       "password": user.password,
     }
   )
-  return {"message": "User created successfully!"}
 
-@router.post("/create-user/", status_code=status.HTTP_201_CREATED)
-def create_user(session: SessionDep, create_user_req: CreateUserRequest):
-  response = supabase.auth.sign_up(
+  supabase_user_id = response.user.id
+
+  new_user = User(
+    supabase_user_id=supabase_user_id,
+  )
+
+  session.add(new_user)
+  session.commit()
+  session.refresh(new_user)
+
+  return {"message": "User created successfully!", "user_id": new_user.id}
+
+@router.post("/sign-in/", status_code=status.HTTP_200_OK)
+def sign_in(user: UserReq):
+  response = supabase.auth.sign_in_with_password(
     {
-      "email": "email@example.com",
-      "password": "password",
+      "email": user.email,
+      "password": user.password
     }
   )
-  create_user = User(
-    username=create_user_req.username,
-    email=create_user_req.email,
-    hashed_password=pwd_context.hash(create_user_req.password),
-    auth_provider="local"
-  )
-  session.add(create_user)
-  session.commit()
-  session.refresh(create_user)
   
-  return {"message": "User created successfully!", "user_id": create_user.id}
+  if not response:
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+  
+  return {
+    "message": "Sign in successful"
+  }
 
-@router.post("/token/", response_model=Token)
-async def login_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: SessionDep):
-  user = authenticate_user(form_data.username, form_data.password, session)
+@router.post("/sign-in-as-guest", status_code=status.HTTP_201_CREATED)
+def sign_in_as_guest(guest: GuestReq, session: SessionDep):
+  response = supabase.auth.sign_in_anonymously({
+        "options": {
+            "data": {
+                "username": guest.username
+            }
+        }
+    })
+  supabase_user_id = response.user.id
+
+  new_user = User(
+    supabase_user_id=supabase_user_id,
+    username=guest.username,
+    is_guest=True,
+  )
+
+  session.add(new_user)
+  session.commit()
+  session.refresh(new_user)
+  
+  return {"logged in as guest": response.user.id}
+
+@router.post("/logout", status_code=status.HTTP_200_OK)
+def logout():
+  supabase.auth.sign_out()
+
+  return {"message": "successfully signed out"}
+
+@router.delete("/delete-account", status_code=status.HTTP_200_OK)
+def delete_account(userDelete: DeleteAcc, session: SessionDep):
+  user =  session.exec(select(User).where(User.id == userDelete.id)).first()
   if not user:
-    raise HTTPException(status_code=404, detail="Could not validate user")
-  if user.auth_provider != "local":
-    raise HTTPException(403, "Please log in using Google.")
-  token = create_access_token(user.username, user.id, timedelta(minutes=20))
+        raise HTTPException(status_code=404, detail="User not found")
 
-  return {"access_token": token, "token_type": "bearer"}
+  if not user.supabase_user_id:
+      raise HTTPException(status_code=400, detail="Supabase user ID missing")
+
+  supabase.auth.admin.delete_user(user.supabase_user_id)
+
+  session.delete(user)
+  session.commit
+
+  return {"message": "successfully deleted user"}
