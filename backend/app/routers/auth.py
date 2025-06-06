@@ -9,6 +9,7 @@ from typing import Annotated
 from datetime import timedelta
 from services.authenticate_user import authenticate_user
 from services.create_access_token import create_access_token
+from db.engine import supabase
 
 router = APIRouter(
   prefix="/auth",
@@ -27,8 +28,24 @@ class Token(BaseModel):
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
 
+@router.post("/test", status_code=status.HTTP_201_CREATED)
+def create_user(user: CreateUserRequest):
+  supabase.auth.sign_up(
+    {
+      "email": user.email,
+      "password": user.password,
+    }
+  )
+  return {"message": "User created successfully!"}
+
 @router.post("/create-user/", status_code=status.HTTP_201_CREATED)
 def create_user(session: SessionDep, create_user_req: CreateUserRequest):
+  response = supabase.auth.sign_up(
+    {
+      "email": "email@example.com",
+      "password": "password",
+    }
+  )
   create_user = User(
     username=create_user_req.username,
     email=create_user_req.email,
