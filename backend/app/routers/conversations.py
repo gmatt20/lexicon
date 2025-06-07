@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
 from db.engine import SessionDep
 from models.models import Conversation, User
 from sqlmodel import select
 from typing import Annotated
 from pydantic import BaseModel
 from services.userExists import user_exists
+from services.jwt_bearer import verify_token
 
 # TURD: Complete the CRUD
 # TODO:
@@ -15,21 +16,25 @@ from services.userExists import user_exists
 router = APIRouter()
 
 class ConversationData(BaseModel):
-  user_id: int
   title: str | None = "New Chat"
 
 @router.post("/conversation/")
-def new_conversation(conversation: ConversationData, session: SessionDep) -> Conversation:
-  if not user_exists(session.get(User, conversation.user_id), session):
+def new_conversation(conversation: ConversationData, session: SessionDep, user_data=Depends(verify_token)) -> Conversation:
+  user_id = user_data["sub"]
+
+  user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
+
+  if not user:
     raise HTTPException(status_code=404, detail="User not found")
   
-  conversation = Conversation(user_id=conversation.user_id, title=conversation.title)
+  conversation = Conversation(user_id=user.id, title=conversation.title)
   session.add(conversation)
   session.commit()
   session.refresh(conversation)
   return conversation
 
 @router.get("/conversations/")
-def get_conversations(session: SessionDep, offset: int = 0, limit: Annotated[int, Query(le=100)] = 100, ) -> list[Conversation]:
-  conversations = session.exec(select(Conversation).offset(offset).limit(limit)).all()
+def get_conversations(session: SessionDep, offset: int = 0, limit: Annotated[int, Query(le=100)] = 100, user_data=Depends(verify_token)) -> list[Conversation]:
+  user_id = user_data["sub"]
+  conversations = session.exec(select(Conversation).where(User.supabase_user_id == user_id)).all()
   return conversations

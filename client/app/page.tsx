@@ -9,14 +9,11 @@ export default function Home() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const latestMessageRef = useRef<HTMLDivElement>(null);
 
-  const handleClick = async () => {
-    console.log("TURD")
-  }
-
   const ws = useRef<WebSocket | null>(null);
 
+
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:8000/ws/1");
+    ws.current = new WebSocket(`ws://localhost:8000/ws/`);
     ws.current.onopen = () => {
       setMessages((prev) => [
         ...prev,
@@ -81,7 +78,7 @@ export default function Home() {
       <form method="post" id="form" onSubmit={handleTextMessage}>
         <InputChat />
       </form>
-      <button onClick={handleClick}>CONTINUE WITH GOOGLE</button>
+      {/* <button onClick={handleClick}>CONTINUE WITH GOOGLE</button> */}
     </div>
   );
 }

@@ -13,6 +13,7 @@ HOST = os.getenv("host")
 PORT = os.getenv("port")
 DBNAME = os.getenv("dbname")
 
+# Connect with Supabase through client
 key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 url: str = os.environ.get("SUPABASE_URL")
 supabase: Client = create_client(url, key)

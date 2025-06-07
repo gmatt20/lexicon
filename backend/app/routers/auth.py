@@ -20,10 +20,6 @@ class GuestReq(BaseModel):
 class DeleteAcc(BaseModel):
    id: int
 
-class Token(BaseModel):
-  access_token: str
-  token_type: str
-
 @router.post("/sign-up", status_code=status.HTTP_201_CREATED)
 def sign_up(user: UserReq, session: SessionDep):
   response = supabase.auth.sign_up(
@@ -34,16 +30,19 @@ def sign_up(user: UserReq, session: SessionDep):
   )
 
   supabase_user_id = response.user.id
+  username = user.email.split("@")[0]
 
   new_user = User(
     supabase_user_id=supabase_user_id,
+    username=username,
+    is_guest=False,
   )
 
   session.add(new_user)
   session.commit()
   session.refresh(new_user)
 
-  return {"message": "User created successfully!", "user_id": new_user.id}
+  return {"message": "User created successfully!", "user_id": new_user.id, "username": username}
 
 @router.post("/sign-in/", status_code=status.HTTP_200_OK)
 def sign_in(user: UserReq):
@@ -58,7 +57,7 @@ def sign_in(user: UserReq):
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
   
   return {
-    "message": "Sign in successful"
+    "message": "Sign in successful", "access_token": response.session.access_token
   }
 
 @router.post("/sign-in-as-guest", status_code=status.HTTP_201_CREATED)
@@ -82,9 +81,9 @@ def sign_in_as_guest(guest: GuestReq, session: SessionDep):
   session.commit()
   session.refresh(new_user)
   
-  return {"logged in as guest": response.user.id}
+  return {"Signed in as guest": response.user.id}
 
-@router.post("/logout", status_code=status.HTTP_200_OK)
+@router.post("/sign-out", status_code=status.HTTP_200_OK)
 def logout():
   supabase.auth.sign_out()
 
