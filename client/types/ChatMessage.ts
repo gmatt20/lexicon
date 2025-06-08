@@ -1,4 +1,4 @@
 export type ChatMessage = {
-  role: "user" | "lex";
+  role: string;
   content: string;
 };

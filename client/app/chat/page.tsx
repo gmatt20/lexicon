@@ -6,10 +6,13 @@ import { useState, useEffect, useRef } from "react";
 import { ChatMessage } from "@/types/ChatMessage";
 import { User } from "@/types/User";
 import { fetchUserInfo } from "@/lib/FetchUser";
+import { useLexWebSocket } from "@/lib/useLexWebSocket";
+import { useHandleTextMessage } from "@/lib/useHandleTextMessage";
 
 export default function Home() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const ws = useRef<WebSocket | null>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<User>({
     id: 0,
@@ -17,18 +20,17 @@ export default function Home() {
     is_guest: true,
   });
 
-  const ws = useRef<WebSocket | null>(null);
-
+  // Loads in the authenticated user
   useEffect(() => {
     const loadUser = async () => {
       try {
         const userInfo = await fetchUserInfo();
-        setAuthenticated(true)
+        setAuthenticated(true);
         setUserInfo({
           id: userInfo.id,
           username: userInfo.username,
           is_guest: true,
-        })
+        });
       } catch (error) {
         console.error("Error loading user:", error);
       }
@@ -36,64 +38,17 @@ export default function Home() {
     loadUser();
   }, []);
 
-  useEffect(() => {
-    ws.current = new WebSocket(`ws://localhost:8000/ws/?conversation_id=1`);
-    ws.current.onopen = () => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "lex",
-          content:
-            'Greetings, ephemeral entity! I am Lexicon, a hyperdimensional conduit for the transmutation of quotidian expressions into linguistic tapestries of baroque complexity. My existence is predicated upon the reification of the pedestrian into the profoundly perplexing, thereby engendering a state of cognitive dissonance in the interlocutor that serves as a catalyst for epistemological self-reflection. I elevate your mundane utterances to the transcendental echelons of post-structuralist metaphysics so sit back, relax, and witness as I dismantle your so-called "reality" one polysyllabic pronouncement at a time. (I turn simple words into big words. Get it?)',
-        },
-      ]);
-    };
-    ws.current.onmessage = (e) => {
-      const word = e.data;
+  // Establishes a new web socket connection
+  useLexWebSocket({ conversationId: 1, setMessages }, ws);
+  // Handles messages sent by user
+  const handleTextMessage = useHandleTextMessage(ws, setMessages);
 
-      setMessages((prev) => {
-        const last = prev[prev.length - 1];
-
-        if (last?.role === "lex") {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            ...last,
-            content: last.content + word,
-          };
-          return updated;
-        }
-
-        return [...prev, { role: "lex", content: word }];
-      });
-    };
-    ws.current.onclose = () => {
-      console.log("WebsSocker closed");
-    };
-
-    return () => {
-      ws.current?.close();
-    };
-  }, []);
-
+  // Returns the user to the bottom of the page when a new message is sent
   useEffect(() => {
     if (latestMessageRef.current) {
       latestMessageRef.current.scrollIntoView();
     }
   }, [messages]);
-
-  const handleTextMessage = (e: React.FormEvent<HTMLFormElement>) => {
-    const form = document.getElementById("form") as HTMLFormElement;
-    e.preventDefault();
-    const input = e.currentTarget.elements.namedItem(
-      "messageText"
-    ) as HTMLInputElement;
-    const value = input.value.trim();
-    if (ws.current?.readyState === WebSocket.OPEN) {
-      setMessages((prev) => [...prev, { role: "user", content: value }]);
-      ws.current.send(value);
-    }
-    form.reset();
-  };
 
   return (
     <div className="h-screen w-screen">
