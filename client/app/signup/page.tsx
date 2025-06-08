@@ -5,13 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Abstract from "@/public/milad-fakurian-E8Ufcyxz514-unsplash.webp";
 import { useState } from "react";
-import { SignIn } from "@/types/SignIn";
+import { SignUp } from "@/types/SignUp";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export default function SignUp() {
+export default function SignUpForm() {
   const router = useRouter();
-  const [formData, setFormData] = useState<SignIn>({
+  const [formData, setFormData] = useState<SignUp>({
     username: "",
     email: "",
     password: "",

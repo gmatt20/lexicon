@@ -52,21 +52,30 @@ def sign_up(user: UserReq, session: SessionDep, response: Response):
 
 @router.post("/sign-in/", status_code=status.HTTP_200_OK)
 def sign_in(user: UserReq, response: Response):
-  responseSupabase = supabase.auth.sign_in_with_password(
-    {
-      "email": user.email,
-      "password": user.password
-    }
-  )
-  
-  if not responseSupabase:
-    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
-  
-  access_token = responseSupabase.session.access_token
+    try:
+        responseSupabase = supabase.auth.sign_in_with_password({
+            "email": user.email,
+            "password": user.password
+        })
 
-  response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True,path="/")
+        if not responseSupabase or not responseSupabase.session:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
 
-  return response
+        access_token = responseSupabase.session.access_token
+
+        response.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=True,
+            path="/"
+        )
+
+        return {"message": "Login successful"}
+    
+    except Exception as e:
+        print("ERROR during sign-in:", e)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.get("/me/")
 def get_current_user(session: SessionDep, user_data=Depends(verify_token)):
