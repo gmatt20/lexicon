@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response, Depends
 from fastapi.responses import JSONResponse
 from starlette import status
 from db.engine import SessionDep
@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from models.models import User
 from db.engine import supabase
 from sqlmodel import select
+from services.jwt_bearer import verify_token
 
 router = APIRouter(
   prefix="/auth",
@@ -66,6 +67,21 @@ def sign_in(user: UserReq, response: Response):
   response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True,path="/")
 
   return response
+
+@router.get("/me/")
+def get_current_user(session: SessionDep, user_data=Depends(verify_token)):
+   supabase_user_id = user_data["sub"]
+
+   user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
+   if not user:
+      raise HTTPException(status_code=404, detail="User not found")
+   
+   return{
+      "id": user.id,
+      "username": user.username,
+      "is_guest": user.is_guest,
+   }
+
 
 @router.post("/sign-in-as-guest", status_code=status.HTTP_201_CREATED)
 def sign_in_as_guest(guest: GuestReq, session: SessionDep):

@@ -4,20 +4,53 @@ import ChatBubble from "@/components/ChatBubble";
 import InputChat from "@/components/InputChat";
 import { useState, useEffect, useRef } from "react";
 import { ChatMessage } from "@/types/ChatMessage";
+import { useEffect } from "react";
+import { User } from "@/types/User";
 
 export default function Home() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const latestMessageRef = useRef<HTMLDivElement>(null);
+  const [user, setUser] = useState(false);
+  const [userInfo, setUserInfo] = useState<User>({
+    id: 0,
+    username: "",
+    is_guest: true
+  });
 
   const ws = useRef<WebSocket | null>(null);
 
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const url = "http://localhost:8000/auth/me/";
+
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const userInfoJson = await response.json();
+        setUser(true);
+        setUserInfo({
+          id: userInfoJson.id,
+          username: userInfoJson.username,
+          is_guest: userInfoJson.is_guest,
+        });
+      }
+    };
+    fetchUserInfo();
+  }, []);
 
   useEffect(() => {
     ws.current = new WebSocket(`ws://localhost:8000/ws/`);
     ws.current.onopen = () => {
       setMessages((prev) => [
         ...prev,
-        { role: "lex", content: "Greetings, ephemeral entity! I am Lexicon, a hyperdimensional conduit for the transmutation of quotidian expressions into linguistic tapestries of baroque complexity. My existence is predicated upon the reification of the pedestrian into the profoundly perplexing, thereby engendering a state of cognitive dissonance in the interlocutor that serves as a catalyst for epistemological self-reflection. I elevate your mundane utterances to the transcendental echelons of post-structuralist metaphysics so sit back, relax, and witness as I dismantle your so-called \"reality\" one polysyllabic pronouncement at a time. (I turn simple words into big words. Get it?)" },
+        {
+          role: "lex",
+          content:
+            'Greetings, ephemeral entity! I am Lexicon, a hyperdimensional conduit for the transmutation of quotidian expressions into linguistic tapestries of baroque complexity. My existence is predicated upon the reification of the pedestrian into the profoundly perplexing, thereby engendering a state of cognitive dissonance in the interlocutor that serves as a catalyst for epistemological self-reflection. I elevate your mundane utterances to the transcendental echelons of post-structuralist metaphysics so sit back, relax, and witness as I dismantle your so-called "reality" one polysyllabic pronouncement at a time. (I turn simple words into big words. Get it?)',
+        },
       ]);
     };
     ws.current.onmessage = (e) => {
@@ -46,9 +79,9 @@ export default function Home() {
       ws.current?.close();
     };
   }, []);
-  
+
   useEffect(() => {
-    if(latestMessageRef.current){
+    if (latestMessageRef.current) {
       latestMessageRef.current.scrollIntoView();
     }
   }, [messages]);
@@ -57,7 +90,7 @@ export default function Home() {
     const form = document.getElementById("form") as HTMLFormElement;
     e.preventDefault();
     const input = e.currentTarget.elements.namedItem(
-      "messageText",
+      "messageText"
     ) as HTMLInputElement;
     const value = input.value.trim();
     if (ws.current?.readyState === WebSocket.OPEN) {
