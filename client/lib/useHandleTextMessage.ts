@@ -5,6 +5,8 @@ export const useHandleTextMessage = (
   setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>
 ) => {
   return(e: React.FormEvent<HTMLFormElement>) => {
+    // Handles the text message sent by the user
+    
     e.preventDefault();
     const form = e.currentTarget;
     const input = form.elements.namedItem(

@@ -1,13 +1,5 @@
 import { useEffect } from "react";
-
-type Message = {
-  role: string;
-  content: string;
-};
-type UseLexWebSocketProps = {
-  conversationId: number;
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-};
+import { UseLexWebSocketProps } from "@/types/UseLexWebSocket";
 
 export const useLexWebSocket = (
   { conversationId, setMessages }: UseLexWebSocketProps,
@@ -15,10 +7,15 @@ export const useLexWebSocket = (
 ) => {
 
   useEffect(() => {
+    // Establishes a new WebSocket connection
+    // We use useRef to store the WebSocket instance so it persists
+    // across component re-renders without triggering re-renders itself.
+    // Note: This does NOT persist across page refreshes.
     wsRef.current = new WebSocket(
       `ws://localhost:8000/ws/?conversation_id=${conversationId}`
     );
 
+    // Upon the WebSocket opening, set the first message by Lex
     wsRef.current.onopen = () => {
       setMessages((prev) => [
         ...prev,
@@ -30,6 +27,7 @@ export const useLexWebSocket = (
       ]);
     };
 
+    // When Lex sends a message, set it to messages
     wsRef.current.onmessage = (e) => {
       const word = e.data;
 
@@ -48,6 +46,8 @@ export const useLexWebSocket = (
         return [...prev, { role: "lex", content: word }];
       });
     };
+
+    // Close the WebSocket
     wsRef.current.onclose = () => {
       console.log("WebsSocker closed");
     };
