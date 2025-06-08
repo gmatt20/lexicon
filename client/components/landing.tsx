@@ -1,8 +1,15 @@
+"use client"
+
 import Lexicon from "@/public/lexicon.webp";
 import Image from "next/image";
 import { Button } from "./ui/button";
+import { redirect } from "next/navigation";
 
 export default function Landing() {
+  const handleRedirect = () => {
+    redirect("/signup")
+  }
+
   return (
     <div className="w-screen flex items-center justify-center flex-col">
       <Image
@@ -11,7 +18,7 @@ export default function Landing() {
         alt="Lexicon"
       />
       <p>introducing lex!</p>
-      <Button>Chat for free</Button>
+      <Button onClick={handleRedirect}>Chat for free</Button>
     </div>
-  );
+  )
 }
