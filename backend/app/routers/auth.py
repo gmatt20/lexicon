@@ -50,20 +50,22 @@ def sign_up(user: UserReq, session: SessionDep, response: Response):
   return response
 
 @router.post("/sign-in/", status_code=status.HTTP_200_OK)
-def sign_in(user: UserReq):
-  response = supabase.auth.sign_in_with_password(
+def sign_in(user: UserReq, response: Response):
+  responseSupabase = supabase.auth.sign_in_with_password(
     {
       "email": user.email,
       "password": user.password
     }
   )
   
-  if not response:
+  if not responseSupabase:
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
   
-  return {
-    "message": "Sign in successful", "access_token": response.session.access_token
-  }
+  access_token = responseSupabase.session.access_token
+
+  response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True,path="/")
+
+  return response
 
 @router.post("/sign-in-as-guest", status_code=status.HTTP_201_CREATED)
 def sign_in_as_guest(guest: GuestReq, session: SessionDep):
