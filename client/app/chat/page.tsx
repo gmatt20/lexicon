@@ -5,39 +5,35 @@ import InputChat from "@/components/InputChat";
 import { useState, useEffect, useRef } from "react";
 import { ChatMessage } from "@/types/ChatMessage";
 import { User } from "@/types/User";
+import { fetchUserInfo } from "@/lib/FetchUser";
 
 export default function Home() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const latestMessageRef = useRef<HTMLDivElement>(null);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<User>({
     id: 0,
     username: "",
-    is_guest: true
+    is_guest: true,
   });
 
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      const url = "http://localhost:8000/auth/me/";
-
-      const response = await fetch(url, {
-        method: "GET",
-        credentials: "include",
-      });
-
-      if (response.ok) {
-        const userInfoJson = await response.json();
-        setAuthenticated(true);
+    const loadUser = async () => {
+      try {
+        const userInfo = await fetchUserInfo();
+        setAuthenticated(true)
         setUserInfo({
-          id: userInfoJson.id,
-          username: userInfoJson.username,
-          is_guest: userInfoJson.is_guest,
-        });
+          id: userInfo.id,
+          username: userInfo.username,
+          is_guest: true,
+        })
+      } catch (error) {
+        console.error("Error loading user:", error);
       }
     };
-    fetchUserInfo();
+    loadUser();
   }, []);
 
   useEffect(() => {
