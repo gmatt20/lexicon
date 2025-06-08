@@ -7,6 +7,7 @@ import Abstract from "@/public/milad-fakurian-E8Ufcyxz514-unsplash.webp";
 import { useState } from "react";
 import { SignIn } from "@/types/SignIn";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 export default function SignUp() {
   const [formData, setFormData] = useState<SignIn>({
@@ -36,14 +37,27 @@ export default function SignUp() {
       });
       if(!response.ok){
         const error = await response.json()
+        toast("Signup failed, please try again later.", {
+          action: {
+            label: "Go Home",
+            onClick: () => redirect("/")
+          }
+        })
         console.error("Signup failed: ", error)
       } else{
+        toast(`Welcome ${formData.username}!`);
         const result = await response.json()
         console.log("Signup successful", result)
         redirect("/chat")
       }
     }
     catch(error){
+      toast("Signup failed, please try again later.", {
+        action: {
+          label: "Go Home",
+          onClick: () => redirect("/"),
+        },
+      });
       console.error(error)
     }
   };
