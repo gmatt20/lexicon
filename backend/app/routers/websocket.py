@@ -19,55 +19,55 @@ ALGORITHM = os.getenv("ALGORITHM")
 
 router = APIRouter()
 
-async def get_cookie_or_token(
+async def get_cookie(
       websocket: WebSocket,
-      session: Annotated[str | None, Cookie()] = None,
-      token: Annotated[str | None, Query()] = None,
+      session: Session
 ):
-   if session is None and token is None:
-      raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
-   return session or token
+   token = websocket.cookies.get("access_token")
+   if not token:
+        raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
+   try:
+        payload = jwt.decode(token, SUPABASE_JWT_SECRET, algorithms=[ALGORITHM], audience="authenticated")
+        user_id = payload["sub"]
+        user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
+        if not user:
+            raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
+        return user
+   except WebSocketException:
+        raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
 
 @router.websocket("/ws/")
 async def ws_endpoint(
     websocket: WebSocket,
     session: SessionDep,
-    token: str = Query(...),
     conversation_id: int = Query(...),
 ):
     await websocket.accept()
-    user_id = None
+
     try:
-        payload = jwt.decode(
-            token,
-            SUPABASE_JWT_SECRET,
-            algorithms=[ALGORITHM],
-            audience="authenticated",
-        )
-        user_id = payload["sub"]
-        user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
-        if not user:
-            await websocket.send_text("User not found.")
-            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-            return
+        user = await get_cookie(websocket, session)
+
         conversation = session.exec(
             select(Conversation).where(
                 Conversation.id == conversation_id,
                 Conversation.user_id == user.id
             )
         ).first()
+
         if not conversation:
             await websocket.send_text("Invalid conversation ID.")
             await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
             return
-    except JWTError:
-        await websocket.send_text("Invalid token.")
+
+    except WebSocketException:
+        await websocket.send_text("Authentication failed.")
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
 
     try:
         while True:
             data = await websocket.receive_text()
+
             user_message = Message(
                 user_id=user.id,
                 conversation_id=conversation_id,
@@ -81,7 +81,7 @@ async def ws_endpoint(
             try:
                 response = Lexercise(data)
                 LexResponse = response["Lex"]
-            except Exception as e:
+            except Exception:
                 await websocket.send_text("Error processing message.")
                 break
 
@@ -98,4 +98,4 @@ async def ws_endpoint(
             await websocket.send_text(LexResponse)
 
     except WebSocketDisconnect:
-        print(f"WebSocket disconnected for user {user_id}")
+        print(f"WebSocket disconnected for user {user.supabase_user_id}")

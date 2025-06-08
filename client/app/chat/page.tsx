@@ -4,13 +4,12 @@ import ChatBubble from "@/components/ChatBubble";
 import InputChat from "@/components/InputChat";
 import { useState, useEffect, useRef } from "react";
 import { ChatMessage } from "@/types/ChatMessage";
-import { useEffect } from "react";
 import { User } from "@/types/User";
 
 export default function Home() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const latestMessageRef = useRef<HTMLDivElement>(null);
-  const [user, setUser] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState<User>({
     id: 0,
     username: "",
@@ -30,7 +29,7 @@ export default function Home() {
 
       if (response.ok) {
         const userInfoJson = await response.json();
-        setUser(true);
+        setAuthenticated(true);
         setUserInfo({
           id: userInfoJson.id,
           username: userInfoJson.username,
@@ -42,7 +41,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    ws.current = new WebSocket(`ws://localhost:8000/ws/`);
+    ws.current = new WebSocket(`ws://localhost:8000/ws/?conversation_id=1`);
     ws.current.onopen = () => {
       setMessages((prev) => [
         ...prev,
@@ -111,6 +110,7 @@ export default function Home() {
       <form method="post" id="form" onSubmit={handleTextMessage}>
         <InputChat />
       </form>
+      {authenticated && <p>Welcome {userInfo.username}</p>}
       {/* <button onClick={handleClick}>CONTINUE WITH GOOGLE</button> */}
     </div>
   );

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,10 +6,11 @@ import { Label } from "@/components/ui/label";
 import Abstract from "@/public/milad-fakurian-E8Ufcyxz514-unsplash.webp";
 import { useState } from "react";
 import { SignIn } from "@/types/SignIn";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function SignUp() {
+  const router = useRouter();
   const [formData, setFormData] = useState<SignIn>({
     username: "",
     email: "",
@@ -24,42 +25,41 @@ export default function SignUp() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     const url = "http://localhost:8000/auth/sign-up/";
 
-    try{
+    try {
       const response = await fetch(url, {
         method: "POST",
         body: JSON.stringify(formData),
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include"
+        credentials: "include",
       });
-      if(!response.ok){
-        const error = await response.json()
+      if (!response.ok) {
+        const error = await response.json();
         toast("Signup failed, please try again later.", {
           action: {
             label: "Go Home",
-            onClick: () => redirect("/")
-          }
-        })
-        console.error("Signup failed: ", error)
-      } else{
+            onClick: () => router.push("/"),
+          },
+        });
+        console.error("Signup failed: ", error);
+      } else {
         toast(`Welcome ${formData.username}!`);
-        const result = await response.json()
-        console.log("Signup successful", result)
-        redirect("/chat")
+        const result = await response.json();
+        console.log("Signup successful", result);
+        router.push("/chat");
       }
-    }
-    catch(error){
-      toast("Signup failed, please try again later.", {
+    } catch (error) {
+      toast("Signup failed on the server side, please try again later.", {
         action: {
           label: "Go Home",
-          onClick: () => redirect("/"),
+          onClick: () => router.push("/"),
         },
       });
-      console.error(error)
+      console.error(error);
     }
   };
 

@@ -22,7 +22,7 @@ class GuestReq(BaseModel):
 class DeleteAcc(BaseModel):
    id: int
 
-@router.post("/sign-up", status_code=status.HTTP_201_CREATED)
+@router.post("/sign-up/", status_code=status.HTTP_201_CREATED)
 def sign_up(user: UserReq, session: SessionDep, response: Response):
   responseSupabase = supabase.auth.sign_up(
     {
@@ -48,7 +48,7 @@ def sign_up(user: UserReq, session: SessionDep, response: Response):
 
   response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True,path="/")
 
-  return response
+  return {"message": "User created successfully", "user_id": new_user.id}
 
 @router.post("/sign-in/", status_code=status.HTTP_200_OK)
 def sign_in(user: UserReq, response: Response):
