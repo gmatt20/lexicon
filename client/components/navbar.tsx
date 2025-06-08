@@ -9,7 +9,8 @@ export default function Navbar() {
     <div className="w-screen flex justify-between items-center px-5 py-3 fixed top-0">
       <p className="text-3xl">Lexicon</p>
       <div className="flex">
-        <Button>Sign Up</Button>
+        <Button className="mr-2">Sign up</Button>
+        <Button>Sign in</Button>
         <Avatar>
           <AvatarImage src={UserRound} />
           <AvatarFallback>US</AvatarFallback>
