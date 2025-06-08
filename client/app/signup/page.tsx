@@ -1,9 +1,53 @@
+"use client"
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Abstract from "@/public/milad-fakurian-E8Ufcyxz514-unsplash.webp"
+import Abstract from "@/public/milad-fakurian-E8Ufcyxz514-unsplash.webp";
+import { useState } from "react";
+import { SignIn } from "@/types/SignIn";
+import { redirect } from "next/navigation";
 
 export default function SignUp() {
+  const [formData, setFormData] = useState<SignIn>({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const url = "http://localhost:8000/auth/sign-up/";
+
+    try{
+      const response = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if(!response.ok){
+        const error = await response.json()
+        console.error("Signup failed: ", error)
+      } else{
+        const result = await response.json()
+        console.log("Signup successful", result)
+        redirect("/chat")
+      }
+    }
+    catch(error){
+      console.error(error)
+    }
+  };
+
   return (
     <div
       className="w-screen h-screen"
@@ -13,17 +57,37 @@ export default function SignUp() {
           <div>
             <p className="text-4xl">Sign up</p>
           </div>
-          <form method="post">
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col items-center justify-center p-5">
               <div>
                 <Label htmlFor="username">Username</Label>
-                <Input type="text" name="username" id="username" />
+                <Input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  id="username"
+                />
                 <Label htmlFor="email">Email</Label>
-                <Input type="email" name="email" id="email" />
+                <Input
+                  required
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  id="email"
+                />
                 <Label htmlFor="password">Password</Label>
-                <Input type="password" name="password" id="password" />
+                <Input
+                  required
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  id="password"
+                />
               </div>
-              <Button>Sign Up</Button>
+              <Button type="submit">Sign Up</Button>
             </div>
           </form>
         </div>
