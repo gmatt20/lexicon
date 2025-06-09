@@ -12,12 +12,12 @@ export default function ChatBubble({ msg }: Props) {
     "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXVzZXItcm91bmQtaWNvbiBsdWNpZGUtdXNlci1yb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSI4IiByPSI1Ii8+PHBhdGggZD0iTTIwIDIxYTggOCAwIDAgMC0xNiAwIi8+PC9zdmc+";
 
   return (
-    <div className="flex flex-col justify-between mx-10">
+    <div className="flex flex-col justify-between">
       {msg.role === "user" ? (
         <div className="flex justify-end items-end my-5">
-          <Card className="bg-primary-foreground text-black max-w-[70%]">
+          <Card className="bg-primary-foreground text-black max-w-[60%]">
             <CardContent>
-              <p className="leading-7">{msg.content}</p>
+              <p className="leading-6 text-sm">{msg.content}</p>
             </CardContent>
           </Card>
           <Avatar>
@@ -31,9 +31,9 @@ export default function ChatBubble({ msg }: Props) {
             <AvatarImage src={Lexicon.src} />
             <AvatarFallback>LX</AvatarFallback>
           </Avatar>
-          <Card className="bg-primary text-white max-w-[70%]">
+          <Card className="bg-primary text-white max-w-[60%]">
             <CardContent>
-              <p className="leading-7">{msg.content}</p>
+              <p className="leading-6 text-sm">{msg.content}</p>
             </CardContent>
           </Card>
         </div>

@@ -7,14 +7,14 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
-      <SidebarProvider>
+    <SidebarProvider>
+      <div className="flex h-screen overflow-hidden">
         <AppSidebar />
-        <main className="mt-14">
+        <main className="flex-1 flex flex-col relative">
           <SidebarTrigger />
           {children}
         </main>
-      </SidebarProvider>
-    </>
+      </div>
+    </SidebarProvider>
   );
 }
