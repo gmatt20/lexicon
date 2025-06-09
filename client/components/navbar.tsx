@@ -26,7 +26,7 @@ export default function Navbar() {
     };
 
     checkAuth();
-  }, []);
+  }, [pathname]);
 
   const upRedirect = () => {
     router.push("/signup");
@@ -54,12 +54,13 @@ export default function Navbar() {
       if (!response.ok) {
         const error = await response.json();
         toast("Sign out failed, please try again later.");
-        console.error("Signin failed: ", error);
+        console.error("Sign out failed: ", error);
       } else {
         // If sign out is successful, redirect user to home
         toast("Successfully signed out");
         const result = await response.json();
         console.log("Sign out successful", result);
+        setIsAuthenticated(false);
         router.push("/");
       }
     } catch (error) {
