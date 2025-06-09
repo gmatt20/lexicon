@@ -38,6 +38,7 @@ import { fetchUserInfo } from "@/lib/FetchUser";
 import { useState, useEffect } from "react";
 import { User } from "@/types/User";
 import { FetchConvos } from "@/lib/FetchConvos";
+import Link from "next/link";
 
 // Menu items.
 const items = [
@@ -121,7 +122,7 @@ export function AppSidebar() {
                   <SidebarMenuSub>
                     {convos.map((convo) => (
                       <SidebarMenuSubItem key={convo.id}>
-                        <a href="/chat/1">{convo.title}</a>
+                        <Link href={`/dashboard/${convo.id}`}>{convo.title}</Link>
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>

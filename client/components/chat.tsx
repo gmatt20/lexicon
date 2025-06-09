@@ -9,8 +9,13 @@ import { fetchUserInfo } from "@/lib/FetchUser";
 import { useLexWebSocket } from "@/lib/hooks/useLexWebSocket";
 import { useHandleTextMessage } from "@/lib/hooks/useHandleTextMessage";
 import { fetchMessages } from "@/lib/FetchMessages";
+import { useParams } from "next/navigation";
 
 export default function Chat() {
+  const params = useParams<{ tag: string; item: string }>();
+
+  console.log(params);
+
   const ws = useRef<WebSocket | null>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);

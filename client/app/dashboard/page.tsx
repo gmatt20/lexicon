@@ -1,9 +1,5 @@
-import Chat from "@/components/chat";
-
-export default function Dashboard() {
-  return (
-    <div className="flex flex-1 flex-col">
-      <Chat />
-    </div>
-  );
+export default function Dashboard(){
+  return(
+    <p className="ml-52">Go talk to me you simpleton - Lex</p>
+  )
 }
