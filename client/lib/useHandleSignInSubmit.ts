@@ -1,14 +1,14 @@
-import { SignUp } from "@/types/SignUp";
+import { SignIn } from "@/types/SignIn";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export const useHandleSignUpSubmit = (formData: SignUp) => {
+export const useHandleSignInSubmit = (formData: SignIn) => {
   const router = useRouter();
 
   return async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const url = "http://localhost:8000/auth/sign-up/";
-    
+    const url = "http://localhost:8000/auth/sign-in/";
+
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -20,21 +20,21 @@ export const useHandleSignUpSubmit = (formData: SignUp) => {
       });
       if (!response.ok) {
         const error = await response.json();
-        toast("Signup failed, please try again later.", {
+        toast("Signin failed, please try again later.", {
           action: {
             label: "Go Home",
             onClick: () => router.push("/"),
           },
         });
-        console.error("Signup failed: ", error);
+        console.error("Signin failed: ", error);
       } else {
-        toast(`Welcome ${formData.username}!`);
+        toast(`Welcome ${formData.email}!`);
         const result = await response.json();
-        console.log("Signup successful", result);
+        console.log("Signin successful", result);
         router.push("/chat");
       }
     } catch (error) {
-      toast("Signup failed on the server side, please try again later.", {
+      toast("Signin failed on the server side, please try again later.", {
         action: {
           label: "Go Home",
           onClick: () => router.push("/"),
