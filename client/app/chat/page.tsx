@@ -8,6 +8,7 @@ import { User } from "@/types/User";
 import { fetchUserInfo } from "@/lib/FetchUser";
 import { useLexWebSocket } from "@/lib/hooks/useLexWebSocket";
 import { useHandleTextMessage } from "@/lib/hooks/useHandleTextMessage";
+import { fetchMessages } from "@/lib/FetchMessages";
 
 export default function Home() {
   const ws = useRef<WebSocket | null>(null);
@@ -31,6 +32,8 @@ export default function Home() {
           username: userInfo.username,
           is_guest: true,
         });
+        const allMessages = await fetchMessages(userInfo.id, 2);
+        setMessages(allMessages);
       } catch (error) {
         console.error("Error loading user:", error);
       }
@@ -39,7 +42,7 @@ export default function Home() {
   }, []);
 
   // Establishes a new web socket connection
-  useLexWebSocket({ conversationId: 1, setMessages }, ws);
+  useLexWebSocket({ conversationId: 2, setMessages }, ws);
   // Handles messages sent by user
   const handleTextMessage = useHandleTextMessage(ws, setMessages);
 
@@ -61,8 +64,6 @@ export default function Home() {
       <form method="post" id="form" onSubmit={handleTextMessage}>
         <InputChat />
       </form>
-      {authenticated && <p>Welcome {userInfo.username}</p>}
-      {/* <button onClick={handleClick}>CONTINUE WITH GOOGLE</button> */}
     </div>
   );
 }
