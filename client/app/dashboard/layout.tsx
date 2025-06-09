@@ -8,7 +8,7 @@ export default function Layout({
 }>) {
   return (
     <SidebarProvider>
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-screen overflow-y-auto">
         <AppSidebar />
         <main className="flex-1 flex flex-col relative">
           <SidebarTrigger />

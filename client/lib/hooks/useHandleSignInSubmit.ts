@@ -38,7 +38,7 @@ export const useHandleSignInSubmit = (formData: SignIn) => {
         toast(`Welcome ${formData.email}!`);
         const result = await response.json();
         console.log("Signin successful", result);
-        router.push("/chat");
+        router.push("/dashboard");
       }
     } catch (error) {
       // Catches any server side errors

@@ -39,7 +39,7 @@ export const useHandleSignUpSubmit = (formData: SignUp) => {
         toast(`Welcome ${formData.username}!`);
         const result = await response.json();
         console.log("Signup successful", result);
-        router.push("/chat");
+        router.push("/dashboard");
       }
     } catch (error) {
       // Catches any server side errors

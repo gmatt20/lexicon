@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Home,
   Settings,
@@ -5,6 +7,7 @@ import {
   MessageSquare,
   User2,
   ChevronUp,
+  ChevronRight,
 } from "lucide-react";
 
 import {
@@ -31,6 +34,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { fetchUserInfo } from "@/lib/FetchUser";
+import { useState, useEffect } from "react";
+import { User } from "@/types/User";
 
 // Menu items.
 const items = [
@@ -47,6 +53,31 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<User>({
+    id: 0,
+    username: "",
+    is_guest: true,
+  });
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userInfo = await fetchUserInfo();
+        setAuthenticated(true);
+        setUserInfo({
+          id: userInfo.id,
+          username: userInfo.username,
+          is_guest: true,
+        });
+        const allMessages = await fetchMessages(userInfo.id, 2);
+        setMessages(allMessages);
+      } catch (error) {
+        console.error("Error loading user:", error);
+      }
+    };
+    loadUser();
+  }, []);
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
@@ -64,12 +95,6 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
               <Collapsible defaultOpen className="group/collapsible">
                 {/* Trigger: Click this to toggle */}
                 <SidebarMenuItem>
@@ -77,6 +102,7 @@ export function AppSidebar() {
                     <SidebarMenuButton>
                       <MessageSquare />
                       <span>Chats</span>
+                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
@@ -106,7 +132,7 @@ export function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> Username
+                  <User2 /> {userInfo.username}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
