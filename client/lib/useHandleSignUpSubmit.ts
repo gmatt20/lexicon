@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 
-export const useHandleSignInSubmit = (formData: SignUp) => {
+export const useHandleSignUpSubmit = (formData: SignUp) => {
   const router = useRouter();
 
   return async (e: React.FormEvent<HTMLFormElement>) => {
@@ -42,5 +42,5 @@ export const useHandleSignInSubmit = (formData: SignUp) => {
       });
       console.error(error);
     }
-  }
+  };
 };

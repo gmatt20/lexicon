@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import Abstract from "@/public/milad-fakurian-E8Ufcyxz514-unsplash.webp";
 import { useState } from "react";
 import { SignUp } from "@/types/SignUp";
-import { useHandleSignInSubmit } from "@/lib/useHandleSignInSubmit";
+import { useHandleSignUpSubmit } from "@/lib/useHandleSignUpSubmit";
 
 export default function SignUpForm() {
   const [formData, setFormData] = useState<SignUp>({
@@ -22,7 +22,7 @@ export default function SignUpForm() {
     }));
   };
 
-  const handleSubmit = useHandleSignInSubmit(formData);
+  const handleSubmit = useHandleSignUpSubmit(formData);
 
   return (
     <div
