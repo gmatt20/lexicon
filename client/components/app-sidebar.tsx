@@ -37,6 +37,7 @@ import {
 import { fetchUserInfo } from "@/lib/FetchUser";
 import { useState, useEffect } from "react";
 import { User } from "@/types/User";
+import { FetchConvos } from "@/lib/FetchConvos";
 
 // Menu items.
 const items = [
@@ -54,6 +55,7 @@ const items = [
 
 export function AppSidebar() {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const [convos, setConvos] = useState([]);
   const [userInfo, setUserInfo] = useState<User>({
     id: 0,
     username: "",
@@ -69,13 +71,20 @@ export function AppSidebar() {
           username: userInfo.username,
           is_guest: true,
         });
-        const allMessages = await fetchMessages(userInfo.id, 2);
-        setMessages(allMessages);
       } catch (error) {
         console.error("Error loading user:", error);
       }
     };
+    const loadConvos = async () => {
+      try {
+        const convos = await FetchConvos();
+        setConvos(convos);
+      } catch (error) {
+        console.error("Error loading conversations:", error);
+      }
+    };
     loadUser();
+    loadConvos();
   }, []);
 
   return (
@@ -110,15 +119,11 @@ export function AppSidebar() {
                 {/* Content: Revealed when open */}
                 <CollapsibleContent className="pl-4">
                   <SidebarMenuSub>
-                    <SidebarMenuSubItem>
-                      <a href="/chat/1">Chat with GPT</a>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <a href="/chat/2">Meeting Notes</a>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <a href="/chat/3">Daily Recap</a>
-                    </SidebarMenuSubItem>
+                    {convos.map((convo) => (
+                      <SidebarMenuSubItem key={convo.id}>
+                        <a href="/chat/1">{convo.title}</a>
+                      </SidebarMenuSubItem>
+                    ))}
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </Collapsible>

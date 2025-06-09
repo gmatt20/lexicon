@@ -34,7 +34,13 @@ def new_conversation(conversation: ConversationData, session: SessionDep, user_d
   return conversation
 
 @router.get("/conversations/")
-def get_conversations(session: SessionDep, offset: int = 0, limit: Annotated[int, Query(le=100)] = 100, user_data=Depends(verify_token)) -> list[Conversation]:
+def get_conversations(session: SessionDep, user_data=Depends(verify_token)):
   user_id = user_data["sub"]
-  conversations = session.exec(select(Conversation).where(User.supabase_user_id == user_id)).all()
+  user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
+  if not user:
+    raise HTTPException(status_code=404, detail="User not found")
+  
+
+  conversations = session.exec(select(Conversation).where(Conversation.user_id == user.id)).all()
+  
   return conversations
