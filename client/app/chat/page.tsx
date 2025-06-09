@@ -6,8 +6,8 @@ import { useState, useEffect, useRef } from "react";
 import { ChatMessage } from "@/types/ChatMessage";
 import { User } from "@/types/User";
 import { fetchUserInfo } from "@/lib/FetchUser";
-import { useLexWebSocket } from "@/lib/useLexWebSocket";
-import { useHandleTextMessage } from "@/lib/useHandleTextMessage";
+import { useLexWebSocket } from "@/lib/hooks/useLexWebSocket";
+import { useHandleTextMessage } from "@/lib/hooks/useHandleTextMessage";
 
 export default function Home() {
   const ws = useRef<WebSocket | null>(null);

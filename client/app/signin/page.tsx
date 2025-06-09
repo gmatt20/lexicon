@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import Abstract from "@/public/milad-fakurian-E8Ufcyxz514-unsplash.webp";
 import { useState } from "react";
 import { SignIn } from "@/types/SignIn";
-import { useHandleSignInSubmit } from "@/lib/useHandleSignInSubmit";
+import { useHandleSignInSubmit } from "@/lib/hooks/useHandleSignInSubmit";
 
 export default function SignInForm() {
   const [formData, setFormData] = useState<SignIn>({
