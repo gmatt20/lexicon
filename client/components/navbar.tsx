@@ -2,17 +2,71 @@
 
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { redirect } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { authenticateUser } from "@/lib/authenticateUser";
+import { toast } from "sonner";
 
 export default function Navbar() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await authenticateUser();
+        setIsAuthenticated(true);
+      } catch {
+        setIsAuthenticated(false);
+        if (pathname == "/chat") {
+          router.push("/signin");
+        }
+      }
+    };
+
+    checkAuth();
+  }, []);
+
   const upRedirect = () => {
-    redirect("/signup");
+    router.push("/signup");
   };
   const inRedirect = () => {
-    redirect("/signin");
+    router.push("/signin");
   };
   const goHome = () => {
-    redirect("/");
+    router.push("/");
+  };
+  const chatRedirect = () => {
+    router.push("/chat");
+  };
+  const signOut = async () => {
+    const url = "http://localhost:8000/auth/sign-out/";
+
+    try {
+      // Signs out an existing user
+      // We need credentials include to include the cookies
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+      });
+      // If sign out fails, throw toast
+      if (!response.ok) {
+        const error = await response.json();
+        toast("Sign out failed, please try again later.");
+        console.error("Signin failed: ", error);
+      } else {
+        // If sign out is successful, redirect user to home
+        toast("Successfully signed out");
+        const result = await response.json();
+        console.log("Sign out successful", result);
+        router.push("/");
+      }
+    } catch (error) {
+      // Catches any server side errors
+      toast("Sign out failed on the server side, please try again later.", {});
+      console.error(error);
+    }
   };
 
   const UserRound: string =
@@ -24,14 +78,28 @@ export default function Navbar() {
         Lexicon
       </p>
       <div className="flex">
-        <Button onClick={upRedirect} className="mr-2">
-          Sign up
-        </Button>
-        <Button onClick={inRedirect}>Sign in</Button>
-        <Avatar>
-          <AvatarImage src={UserRound} />
-          <AvatarFallback>US</AvatarFallback>
-        </Avatar>
+        {isAuthenticated && (
+          <>
+            <Button onClick={chatRedirect} className="mr-2">
+              Chat
+            </Button>
+            <Button onClick={signOut} className="mr-2">
+              Sign Out
+            </Button>
+            <Avatar>
+              <AvatarImage src={UserRound} />
+              <AvatarFallback>US</AvatarFallback>
+            </Avatar>
+          </>
+        )}
+        {!isAuthenticated && (
+          <>
+            <Button onClick={upRedirect} className="mr-2">
+              Sign up
+            </Button>
+            <Button onClick={inRedirect}>Sign in</Button>
+          </>
+        )}
       </div>
     </div>
   );
