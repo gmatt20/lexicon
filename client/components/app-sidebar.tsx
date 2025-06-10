@@ -38,23 +38,13 @@ import { fetchUserInfo } from "@/lib/FetchUser";
 import { useState, useEffect } from "react";
 import { User } from "@/types/User";
 import { FetchConvos } from "@/lib/FetchConvos";
+import { NewConvo } from "@/lib/NewConvo";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-// Menu items.
-const items = [
-  {
-    title: "New Chat",
-    url: "#",
-    icon: SquarePen,
-  },
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-];
 
 export function AppSidebar() {
+  const router = useRouter();
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [convos, setConvos] = useState([]);
   const [userInfo, setUserInfo] = useState<User>({
@@ -88,6 +78,17 @@ export function AppSidebar() {
     loadConvos();
   }, []);
 
+  const handleNewConvo = async () => {
+    try {
+      const newConvo = await NewConvo("New Chat");
+    } catch (error) {
+      console.error("Error making a new conversation:", error);
+    }
+  };
+  const handleHome = async () => {
+    router.push("/dashboard")
+  }
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
@@ -95,16 +96,22 @@ export function AppSidebar() {
           <SidebarGroupLabel>Lexicon</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <div onClick={handleNewConvo}>
+                    <SquarePen />
+                    <span>New Chat</span>
+                  </div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <div onClick={handleHome}>
+                    <Home />
+                    <span>Home</span>
+                  </div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <Collapsible defaultOpen className="group/collapsible">
                 {/* Trigger: Click this to toggle */}
                 <SidebarMenuItem>
@@ -122,7 +129,9 @@ export function AppSidebar() {
                   <SidebarMenuSub>
                     {convos.map((convo) => (
                       <SidebarMenuSubItem key={convo.id}>
-                        <Link href={`/dashboard/${convo.id}`}>{convo.title}</Link>
+                        <Link href={`/dashboard/${convo.id}`}>
+                          {convo.title}
+                        </Link>
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>

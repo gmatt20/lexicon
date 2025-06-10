@@ -19,19 +19,18 @@ class ConversationData(BaseModel):
   title: str | None = "New Chat"
 
 @router.post("/conversation/")
-def new_conversation(conversation: ConversationData, session: SessionDep, user_data=Depends(verify_token)) -> Conversation:
+def new_conversation(conversation: ConversationData, session: SessionDep, user_data=Depends(verify_token)):
   user_id = user_data["sub"]
 
   user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
-
   if not user:
+
     raise HTTPException(status_code=404, detail="User not found")
   
   conversation = Conversation(user_id=user.id, title=conversation.title)
   session.add(conversation)
   session.commit()
   session.refresh(conversation)
-  return conversation
 
 @router.get("/conversations/")
 def get_conversations(session: SessionDep, user_data=Depends(verify_token)):
