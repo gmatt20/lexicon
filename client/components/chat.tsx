@@ -14,7 +14,7 @@ import { useParams } from "next/navigation";
 export default function Chat() {
   const params = useParams();
 
-  const conversationID = Number(params.conversationId)
+  const conversationID = Number(params.conversationId);
   const ws = useRef<WebSocket | null>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -34,6 +34,9 @@ export default function Chat() {
           user.id,
           Number(conversationID)
         );
+        if (allMessages.length === 0) {
+          return;
+        }
         setMessages(allMessages);
       } catch (error) {
         console.error("Error loading user:", error);
