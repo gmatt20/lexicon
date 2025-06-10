@@ -20,12 +20,12 @@ class Conversation(SQLModel, table=True):
   time_created: datetime = Field(default_factory=datetime.utcnow)
   # Relationships
   user: User | None = Relationship(back_populates="conversations")
-  messages: list["Message"] = Relationship(back_populates="conversation")
+  messages: list["Message"] = Relationship(back_populates="conversation", cascade_delete=True)
 
 class Message(SQLModel, table=True):
   id: int | None = Field(default=None, primary_key=True)
   user_id: int | None = Field(foreign_key="user.id")
-  conversation_id: int | None = Field(foreign_key="conversation.id")
+  conversation_id: int | None = Field(foreign_key="conversation.id", ondelete="CASCADE")
   role: str
   content: str
   time_created: datetime = Field(default_factory=datetime.utcnow)

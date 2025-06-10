@@ -17,6 +17,10 @@ export const NewConvo = async (title: string) => {
     if (!response.ok) {
       throw new Error(`HTTP Error: ${response.status}`);
     }
+
+    const data = await response.json();
+
+    return data;
   } catch (error) {
     // Catches a fetch error
     throw new Error(`Failed to make a new conversation: ${error}`);

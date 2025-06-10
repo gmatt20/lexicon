@@ -10,9 +10,12 @@ import { useLexWebSocket } from "@/lib/hooks/useLexWebSocket";
 import { useHandleTextMessage } from "@/lib/hooks/useHandleTextMessage";
 import { fetchMessages } from "@/lib/FetchMessages";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Chat() {
   const params = useParams();
+  const router = useRouter();
 
   const conversationID = Number(params.conversationId);
   const ws = useRef<WebSocket | null>(null);
@@ -24,26 +27,45 @@ export default function Chat() {
     is_guest: true,
   });
 
-  // Load authenticated user and their messages
+  // Load authenticated user
   useEffect(() => {
     const loadUser = async () => {
       try {
         const user = await fetchUserInfo();
+        if (!user) {
+          router.push("/signin");
+          return;
+        }
         setUserInfo(user);
+      } catch (error) {
+        console.error("Error loading user:", error);
+        router.push("/signin");
+      }
+    };
+    loadUser();
+  }, []);
+
+  // Loads authenticated user's messages
+  useEffect(() => {
+    const fetch = async () => {
+      try {
         const allMessages = await fetchMessages(
-          user.id,
+          userInfo.id,
           Number(conversationID)
         );
-        if (allMessages.length === 0) {
+        if (!allMessages || allMessages.length === 0) {
+          toast("No messages found.");
+          setMessages([]);
           return;
         }
         setMessages(allMessages);
       } catch (error) {
-        console.error("Error loading user:", error);
+        toast("Failed to get messages, try again later");
+        console.error("Failed to fetch messages:", error);
       }
     };
-    loadUser();
-  }, [conversationID]);
+    fetch();
+  }, []);
 
   // Set up websocket
   useLexWebSocket({ conversationId: Number(conversationID), setMessages }, ws);

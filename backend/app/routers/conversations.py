@@ -32,6 +32,8 @@ def new_conversation(conversation: ConversationData, session: SessionDep, user_d
   session.commit()
   session.refresh(conversation)
 
+  return{"conversation_id": conversation.id, "conversation_title": conversation.title}
+
 @router.get("/conversations/")
 def get_conversations(session: SessionDep, user_data=Depends(verify_token)):
   user_id = user_data["sub"]
@@ -43,3 +45,19 @@ def get_conversations(session: SessionDep, user_data=Depends(verify_token)):
   conversations = session.exec(select(Conversation).where(Conversation.user_id == user.id)).all()
   
   return conversations
+
+@router.delete("/conversations/")
+def delete_all_conversations(session: SessionDep, user_data=Depends(verify_token)):
+  user_id = user_data["sub"]
+  user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
+  if not user:
+    raise HTTPException(status_code=404, detail="User not found")
+  
+  conversations = session.exec(select(Conversation).where(Conversation.user_id == user.id)).all()
+
+  for conversation in conversations:
+    session.delete(conversation)
+  session.commit()
+
+  return{"deleted all conversations": True}
+  
