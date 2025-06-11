@@ -55,26 +55,31 @@ export function useConversations() {
   }, []);
 
   const deleteConvos = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("http://localhost:8000/conversations/", {
-        method: "DELETE",
-        credentials: "include",
-      });
-
-      if (!response.ok) throw new Error("Not authenticated");
-      toast("Successfully deleted all conversations");
-      router.push("/dashboard");
-      const result = await response.json();
-      console.log("Successfully deleting all conversations", result);
-      setConvos([]);
-    } catch (error) {
-      toast(
-        "Error deleting all conversations on the server side, try again later."
-      );
-      setError(error as Error);
-    } finally {
-      setLoading(false);
+    if(convos.length !== 0){
+      setLoading(true);
+      try {
+        const response = await fetch("http://localhost:8000/conversations/", {
+          method: "DELETE",
+          credentials: "include",
+        });
+  
+        if (!response.ok) throw new Error("Not authenticated");
+        toast("Successfully deleted all conversations");
+        router.push("/dashboard");
+        const result = await response.json();
+        console.log("Successfully deleting all conversations", result);
+        setConvos([]);
+      } catch (error) {
+        toast(
+          "Error deleting all conversations on the server side, try again later."
+        );
+        setError(error as Error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    else{
+      toast("Conversations are already deletes")
     }
   }, []);
 
