@@ -45,6 +45,7 @@ export function useConversations() {
       });
       if (!response) throw new Error("Not Authenticated");
       const data = await response.json();
+      fetchConvos();
       router.push(`/dashboard/${data.id}`);
     } catch (error) {
       setError(error as Error);
@@ -63,6 +64,7 @@ export function useConversations() {
 
       if (!response.ok) throw new Error("Not authenticated");
       toast("Successfully deleted all conversations");
+      router.push("/dashboard");
       const result = await response.json();
       console.log("Successfully deleting all conversations", result);
       setConvos([]);
