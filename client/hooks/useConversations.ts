@@ -1,11 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { Conversation } from "@/types/Conversation";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function useConversations() {
   const [convos, setConvos] = useState<Conversation[]>([]);
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const fetchConvos = useCallback(async () => {
     setLoading(true);
@@ -22,6 +24,28 @@ export function useConversations() {
       // Returns a list of all conversations by user
       const data = await response.json();
       setConvos(data);
+    } catch (error) {
+      setError(error as Error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const newConvo = useCallback(async () => {
+    try {
+      const response = await fetch("http://localhost:8000/conversation/", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: "New Chat",
+        }),
+      });
+      if (!response) throw new Error("Not Authenticated");
+      const data = await response.json();
+      router.push(`/dashboard/${data.id}`);
     } catch (error) {
       setError(error as Error);
     } finally {
@@ -56,5 +80,5 @@ export function useConversations() {
     fetchConvos();
   }, [fetchConvos]);
 
-  return { convos, loading, error, fetchConvos, deleteConvos };
+  return { convos, loading, error, fetchConvos, newConvo, deleteConvos };
 }

@@ -32,7 +32,7 @@ def new_conversation(conversation: ConversationData, session: SessionDep, user_d
   session.commit()
   session.refresh(conversation)
 
-  return{"conversation_id": conversation.id, "conversation_title": conversation.title}
+  return{"conversation_title": conversation.title, "user_id": conversation.user_id, "id": conversation.id, "time_created": conversation.time_created}
 
 @router.get("/conversations/")
 def get_conversations(session: SessionDep, user_data=Depends(verify_token)):

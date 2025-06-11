@@ -40,29 +40,15 @@ import { useConversations } from "@/hooks/useConversations";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSignOut } from "@/hooks/useSignOut";
+import { Spinner } from "@heroui/spinner";
 
 export function AppSidebar() {
   const router = useRouter();
   const { user } = useAuthenticateUser();
-  const { convos, loading, error, fetchConvos, deleteConvos } =
+  const { convos, loading, error, newConvo, deleteConvos } =
     useConversations();
   const signOut = useSignOut();
 
-  // const handleNewConvo = async () => {
-  //   try {
-  //     const newConvo = await NewConvo("New Chat");
-  //     console.log(newConvo);
-  //     setConvo({
-  //       conversation_id: newConvo.conversation_id,
-  //       conversation_title: newConvo.conversation_title,
-  //     });
-  //     console.log(convo);
-  //     setConvos((prevConvos) => [...prevConvos, newConvo]);
-  //     router.push(`/dashboard/${newConvo.conversation_id}`);
-  //   } catch (error) {
-  //     console.error("Error making a new conversation:", error);
-  //   }
-  // };
   const handleHome = async () => {
     router.push("/dashboard");
   };
@@ -76,7 +62,7 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <div>
+                  <div onClick={newConvo}>
                     <SquarePen />
                     <span>New Chat</span>
                   </div>
@@ -105,13 +91,17 @@ export function AppSidebar() {
                 {/* Content: Revealed when open */}
                 <CollapsibleContent className="pl-4">
                   <SidebarMenuSub>
-                    {convos.map((convo, i) => (
-                      <SidebarMenuSubItem key={i}>
-                        <Link href={`/dashboard/${convo.id}`}>
-                          {convo.title}
-                        </Link>
-                      </SidebarMenuSubItem>
-                    ))}
+                    {loading ? (
+                      <Spinner />
+                    ) : (
+                      convos.map((convo, i) => (
+                        <SidebarMenuSubItem key={i}>
+                          <Link href={`/dashboard/${convo.id}`}>
+                            {convo.title}
+                          </Link>
+                        </SidebarMenuSubItem>
+                      ))
+                    )}
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </Collapsible>
