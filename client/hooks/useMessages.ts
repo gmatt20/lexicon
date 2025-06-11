@@ -23,34 +23,31 @@ export function useMessages() {
   useEffect(() => {
     const fetchMessages = async () => {
       // Loads authenticated user's messages
-      try {
-        // Makes a get request to fetch user messages based on conversation
-        const response = await fetch(
-          `http://localhost:8000/messages/${user?.id}/${conversationID}`,
-          {
-            method: "GET",
-            // Includes the cookies
-            credentials: "include",
-          }
-        );
-
-        // Throws a HTTP error
-        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-        // Parses into JSON
+      // Makes a get request to fetch user messages based on conversation
+      const response = await fetch(
+        `http://localhost:8000/messages/${user?.id}/${conversationID}`,
+        {
+          method: "GET",
+          // Includes the cookies
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
         const data = await response.json();
-        // Returns a JSON:
-        // list of all messages
         setMessages(data ?? []);
-      } catch (error) {
-        // Catches a fetch error
-        toast("Failed to load messages");
-        console.error("Error fetching messages:", error);
-        setError(error as Error);
-      } finally {
-        setLoading(false);
+      } else {
+        // Handles expected "empty" responses silently
+        setMessages([]);
+        if (response.status !== 404) {
+          console.error("Unexpected error fetching messages:", response.status);
+          setError(new Error(`Unexpected HTTP Error: ${response.status}`));
+        }
       }
+      setLoading(false);
     };
-    fetchMessages();
+    if(!userLoading) {
+      fetchMessages();
+    }
   }, [user, userLoading, conversationID]);
 
   // Set up websocket

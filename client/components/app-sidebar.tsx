@@ -44,7 +44,7 @@ import { Spinner } from "@heroui/spinner";
 export function AppSidebar() {
   const router = useRouter();
   const { user, signOut } = useAuthentication();
-  const { convos, loading, error, newConvo, deleteConvos } = useConversations();
+  const { convos, loading, newConvo, deleteConvos } = useConversations();
 
   const handleHome = async () => {
     router.push("/dashboard");

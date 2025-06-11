@@ -9,16 +9,14 @@ export default function Chat() {
     useMessages();
 
   return (
-    <div className="flex flex-col flex-1 relative h-full">
-      <div className="flex-1 overflow-y-auto py-10 pb-32">
+    <>
+      <div className=" overflow-y-auto py-10 pb-32">
         {error && (
           <div className="text-center text-red-500">
             {error.message || "Something went wrong"}
           </div>
         )}
-        {!loading && messages.map((msg, i) => (
-          <ChatBubble msg={msg} key={i} />
-        ))}
+        {!loading && messages.map((msg, i) => <ChatBubble msg={msg} key={i} />)}
         <div ref={latestMessageRef} />
       </div>
       <form
@@ -26,6 +24,6 @@ export default function Chat() {
         onSubmit={handleTextMessage}>
         <InputChat />
       </form>
-    </div>
+    </>
   );
 }
