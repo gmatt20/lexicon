@@ -40,11 +40,13 @@ import { useFetchConvos } from "@/hooks/useFetchConvos";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useSignOut } from "@/hooks/useSignOut";
 
 export function AppSidebar() {
   const router = useRouter();
   const { user } = useAuthenticateUser();
   const { convos } = useFetchConvos();
+  const signOut = useSignOut();
 
   // const handleNewConvo = async () => {
   //   try {
@@ -63,35 +65,6 @@ export function AppSidebar() {
   // };
   const handleHome = async () => {
     router.push("/dashboard");
-  };
-
-  const signOut = async () => {
-    const url = "http://localhost:8000/auth/sign-out/";
-
-    try {
-      // Signs out an existing user
-      // We need credentials include to include the cookies
-      const response = await fetch(url, {
-        method: "POST",
-        credentials: "include",
-      });
-      // If sign out fails, throw toast
-      if (!response.ok) {
-        const error = await response.json();
-        toast("Sign out failed, please try again later.");
-        console.error("Sign out failed: ", error);
-      } else {
-        // If sign out is successful, redirect user to home
-        toast("Successfully signed out");
-        const result = await response.json();
-        console.log("Sign out successful", result);
-        router.push("/");
-      }
-    } catch (error) {
-      // Catches any server side errors
-      toast("Sign out failed on the server side, please try again later.", {});
-      console.error(error);
-    }
   };
 
   const deleteAllConvos = async () => {
@@ -200,7 +173,7 @@ export function AppSidebar() {
                 <DropdownMenuItem>
                   <span>Account</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={signOut}>
+                <DropdownMenuItem onClick={() => signOut()}>
                   <span>Sign out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
