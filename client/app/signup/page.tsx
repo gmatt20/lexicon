@@ -6,9 +6,11 @@ import { Label } from "@/components/ui/label";
 import Abstract from "@/public/milad-fakurian-E8Ufcyxz514-unsplash.webp";
 import { useState } from "react";
 import { SignUp } from "@/types/SignUp";
-import { useHandleSignUpSubmit } from "@/lib/hooks/useHandleSignUpSubmit";
+import { useAuthentication } from "@/hooks/useAuthentication";
 
 export default function SignUpForm() {
+  const { signUp } = useAuthentication();
+  
   const [formData, setFormData] = useState<SignUp>({
     username: "",
     email: "",
@@ -22,8 +24,6 @@ export default function SignUpForm() {
     }));
   };
 
-  const handleSubmit = useHandleSignUpSubmit(formData);
-
   return (
     <div
       className="w-screen h-screen"
@@ -33,7 +33,7 @@ export default function SignUpForm() {
           <div>
             <p className="text-4xl">Sign up</p>
           </div>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => signUp(formData)(e)}>
             <div className="flex flex-col items-center justify-center p-5">
               <div>
                 <Label htmlFor="username">Username</Label>

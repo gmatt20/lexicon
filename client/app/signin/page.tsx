@@ -9,6 +9,8 @@ import { SignIn } from "@/types/SignIn";
 import { useAuthentication } from "@/hooks/useAuthentication";
 
 export default function SignInForm() {
+  const { signIn } = useAuthentication();
+
   const [formData, setFormData] = useState<SignIn>({
     email: "",
     password: "",
@@ -20,8 +22,6 @@ export default function SignInForm() {
       [e.target.name]: e.target.value,
     }));
   };
-
-  const { signIn } = useAuthentication();
 
   return (
     <div
