@@ -35,7 +35,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { fetchUserInfo } from "@/lib/FetchUser";
+import { useAuthenticateUser } from "@/lib/useAuthenticateUser";
 import { useState, useEffect } from "react";
 import { User } from "@/types/User";
 import { FetchConvos } from "@/lib/FetchConvos";
@@ -47,44 +47,28 @@ import { Conversation } from "@/types/Conversation";
 
 export function AppSidebar() {
   const router = useRouter();
-  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const { user, loading, error } = useAuthenticateUser();
+  console.log("user:", user);
+  console.log(loading);
+  console.log(error);
   const [convo, setConvo] = useState<Conversation>({
     conversation_id: 0,
     conversation_title: "",
   });
   const [allConvos, setConvos] = useState<Conversation[]>([]);
-  const [userInfo, setUserInfo] = useState<User>({
-    id: 0,
-    username: "",
-    is_guest: true,
-  });
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const userInfo = await fetchUserInfo();
-        setAuthenticated(true);
-        setUserInfo({
-          id: userInfo.id,
-          username: userInfo.username,
-          is_guest: true,
-        });
-      } catch (error) {
-        console.error("Error loading user:", error);
-      }
-    };
     const loadConvos = async () => {
       try {
         const convos = await FetchConvos();
         const trimmedConvos = convos.map((convo: any) => ({
           conversation_id: convo.id,
-          conversation_title: convo.title
+          conversation_title: convo.title,
         }));
         setConvos(trimmedConvos);
       } catch (error) {
         console.error("Error loading conversations:", error);
       }
     };
-    loadUser();
     loadConvos();
   }, []);
 
@@ -127,7 +111,6 @@ export function AppSidebar() {
         toast("Successfully signed out");
         const result = await response.json();
         console.log("Sign out successful", result);
-        setAuthenticated(false);
         router.push("/");
       }
     } catch (error) {
@@ -225,7 +208,7 @@ export function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> {authenticated && userInfo.username}
+                  <User2 /> {user && user.username}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>

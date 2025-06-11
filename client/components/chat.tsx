@@ -53,19 +53,14 @@ export default function Chat() {
           userInfo.id,
           Number(conversationID)
         );
-        if (!allMessages || allMessages.length === 0) {
-          toast("No messages found.");
-          setMessages([]);
-          return;
-        }
-        setMessages(allMessages);
+        setMessages(allMessages ?? []);
       } catch (error) {
         toast("Failed to get messages, try again later");
         console.error("Failed to fetch messages:", error);
       }
     };
     fetch();
-  }, []);
+  }, [userInfo.id, conversationID]);
 
   // Set up websocket
   useLexWebSocket({ conversationId: Number(conversationID), setMessages }, ws);
