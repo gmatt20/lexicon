@@ -36,16 +36,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthenticateUser } from "@/hooks/useAuthenticateUser";
-import { useFetchConvos } from "@/hooks/useFetchConvos";
+import { useConversations } from "@/hooks/useConversations";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { useSignOut } from "@/hooks/useSignOut";
 
 export function AppSidebar() {
   const router = useRouter();
   const { user } = useAuthenticateUser();
-  const { convos } = useFetchConvos();
+  const { convos, loading, error, fetchConvos, deleteConvos } =
+    useConversations();
   const signOut = useSignOut();
 
   // const handleNewConvo = async () => {
@@ -65,36 +65,6 @@ export function AppSidebar() {
   // };
   const handleHome = async () => {
     router.push("/dashboard");
-  };
-
-  const deleteAllConvos = async () => {
-    const url = "http://localhost:8000/conversations/";
-
-    try {
-      const response = await fetch(url, {
-        method: "DELETE",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        toast("Error deleting all conversations, try again later");
-        console.error("Error deleting all conversations: ", error);
-      } else {
-        toast("Successfully deleted all conversations");
-        const result = await response.json();
-        console.log("Successfully deleting all conversations", result);
-        setConvos([]);
-        setConvo({ conversation_id: 0, conversation_title: "" });
-      }
-    } catch (error) {
-      // Catches any server side errors
-      toast(
-        "Error deleting all conversations on the server side, try again later.",
-        {}
-      );
-      console.error(error);
-    }
   };
 
   return (
@@ -166,14 +136,14 @@ export function AppSidebar() {
                   <Settings />
                   <span>Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={deleteAllConvos}>
+                <DropdownMenuItem onClick={deleteConvos}>
                   <OctagonX />
                   <span>Delete all conversations</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <span>Account</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DropdownMenuItem onClick={signOut}>
                   <span>Sign out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
