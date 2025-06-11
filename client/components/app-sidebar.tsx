@@ -43,7 +43,7 @@ import { Spinner } from "@heroui/spinner";
 
 export function AppSidebar() {
   const router = useRouter();
-  const { user, signOut, loading, error } = useAuthentication();
+  const { user, signOut } = useAuthentication();
   const { convos, loading, error, newConvo, deleteConvos } = useConversations();
 
   const handleHome = async () => {

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import Abstract from "@/public/milad-fakurian-E8Ufcyxz514-unsplash.webp";
 import { useState } from "react";
 import { SignIn } from "@/types/SignIn";
-import { useHandleSignInSubmit } from "@/lib/hooks/useHandleSignInSubmit";
+import { useAuthentication } from "@/hooks/useAuthentication";
 
 export default function SignInForm() {
   const [formData, setFormData] = useState<SignIn>({
@@ -21,7 +21,7 @@ export default function SignInForm() {
     }));
   };
 
-  const handleSubmit = useHandleSignInSubmit(formData);
+  const { signIn } = useAuthentication();
 
   return (
     <div
@@ -32,7 +32,7 @@ export default function SignInForm() {
           <div>
             <p className="text-4xl">Sign in</p>
           </div>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => signIn(formData)(e)}>
             <div className="flex flex-col items-center justify-center p-5">
               <div>
                 <Label htmlFor="email">Email</Label>

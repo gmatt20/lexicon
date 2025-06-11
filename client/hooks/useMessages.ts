@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
-import { useAuthenticateUser } from "./useAuthentication";
+import { useAuthentication } from "./useAuthentication";
 import { ChatMessage } from "@/types/ChatMessage";
 import { toast } from "sonner";
 import { useLexWebSocket } from "@/lib/hooks/useLexWebSocket";
@@ -10,7 +10,7 @@ export function useMessages() {
   const params = useParams();
   const conversationID = Number(params.conversationId);
 
-  const { user, loading: userLoading } = useAuthenticateUser();
+  const { user, loading: userLoading } = useAuthentication();
 
   const ws = useRef<WebSocket | null>(null);
 
