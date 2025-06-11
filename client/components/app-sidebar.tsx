@@ -2,13 +2,11 @@
 
 import {
   Home,
-  Settings,
   SquarePen,
   MessageSquare,
   User2,
   ChevronUp,
   ChevronRight,
-  OctagonX,
 } from "lucide-react";
 
 import {
@@ -40,6 +38,17 @@ import { useConversations } from "@/hooks/useConversations";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@heroui/spinner";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
   const router = useRouter();
@@ -119,14 +128,31 @@ export function AppSidebar() {
               <DropdownMenuContent
                 side="top"
                 className="w-[--radix-popper-anchor-width]">
-                <DropdownMenuItem>
-                  <Settings />
-                  <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={deleteConvos}>
-                  <OctagonX />
-                  <span>Delete all conversations</span>
-                </DropdownMenuItem>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <span className="hover:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">
+                      Delete all conversations
+                    </span>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Delete all conversations?</DialogTitle>
+                      <DialogDescription>
+                        This action cannot be undone.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button variant="outline">Cancel</Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button variant="destructive" onClick={deleteConvos}>
+                          Delete
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
                 <DropdownMenuItem>
                   <span>Account</span>
                 </DropdownMenuItem>
