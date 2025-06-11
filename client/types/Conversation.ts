@@ -1,4 +1,6 @@
 export type Conversation = {
-  conversation_id: number;
-  conversation_title: string;
-}
+  title: string;
+  user_id: number;
+  id: number;
+  time_created: string;
+};

@@ -35,58 +35,32 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAuthenticateUser } from "@/lib/useAuthenticateUser";
-import { useState, useEffect } from "react";
-import { User } from "@/types/User";
-import { FetchConvos } from "@/lib/FetchConvos";
-import { NewConvo } from "@/lib/NewConvo";
+import { useAuthenticateUser } from "@/hooks/useAuthenticateUser";
+import { useFetchConvos } from "@/hooks/useFetchConvos";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Conversation } from "@/types/Conversation";
 
 export function AppSidebar() {
   const router = useRouter();
-  const { user, loading, error } = useAuthenticateUser();
-  console.log("user:", user);
-  console.log(loading);
-  console.log(error);
-  const [convo, setConvo] = useState<Conversation>({
-    conversation_id: 0,
-    conversation_title: "",
-  });
-  const [allConvos, setConvos] = useState<Conversation[]>([]);
-  useEffect(() => {
-    const loadConvos = async () => {
-      try {
-        const convos = await FetchConvos();
-        const trimmedConvos = convos.map((convo: any) => ({
-          conversation_id: convo.id,
-          conversation_title: convo.title,
-        }));
-        setConvos(trimmedConvos);
-      } catch (error) {
-        console.error("Error loading conversations:", error);
-      }
-    };
-    loadConvos();
-  }, []);
+  const { user } = useAuthenticateUser();
+  const { convos } = useFetchConvos();
 
-  const handleNewConvo = async () => {
-    try {
-      const newConvo = await NewConvo("New Chat");
-      console.log(newConvo);
-      setConvo({
-        conversation_id: newConvo.conversation_id,
-        conversation_title: newConvo.conversation_title,
-      });
-      console.log(convo);
-      setConvos((prevConvos) => [...prevConvos, newConvo]);
-      router.push(`/dashboard/${newConvo.conversation_id}`);
-    } catch (error) {
-      console.error("Error making a new conversation:", error);
-    }
-  };
+  // const handleNewConvo = async () => {
+  //   try {
+  //     const newConvo = await NewConvo("New Chat");
+  //     console.log(newConvo);
+  //     setConvo({
+  //       conversation_id: newConvo.conversation_id,
+  //       conversation_title: newConvo.conversation_title,
+  //     });
+  //     console.log(convo);
+  //     setConvos((prevConvos) => [...prevConvos, newConvo]);
+  //     router.push(`/dashboard/${newConvo.conversation_id}`);
+  //   } catch (error) {
+  //     console.error("Error making a new conversation:", error);
+  //   }
+  // };
   const handleHome = async () => {
     router.push("/dashboard");
   };
@@ -159,7 +133,7 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <div onClick={handleNewConvo}>
+                  <div>
                     <SquarePen />
                     <span>New Chat</span>
                   </div>
@@ -188,10 +162,10 @@ export function AppSidebar() {
                 {/* Content: Revealed when open */}
                 <CollapsibleContent className="pl-4">
                   <SidebarMenuSub>
-                    {allConvos.map((convo, i) => (
+                    {convos.map((convo, i) => (
                       <SidebarMenuSubItem key={i}>
-                        <Link href={`/dashboard/${convo.conversation_id}`}>
-                          {convo.conversation_title}
+                        <Link href={`/dashboard/${convo.id}`}>
+                          {convo.title}
                         </Link>
                       </SidebarMenuSubItem>
                     ))}

@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { authenticateUser } from "@/lib/useAuthenticateUser";
+import { authenticateUser } from "@/hooks/useAuthenticateUser";
 import { toast } from "sonner";
 
 export default function Navbar() {
