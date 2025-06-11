@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { User } from "@/types/User";
 import { useCallback } from "react";

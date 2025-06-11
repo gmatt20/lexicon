@@ -58,6 +58,9 @@ export function AppSidebar() {
   const handleHome = async () => {
     router.push("/dashboard");
   };
+  const handleSettings = () => {
+    router.push("/settings");
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -150,7 +153,7 @@ export function AppSidebar() {
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSettings}>
                   <span>Account</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={signOut}>
