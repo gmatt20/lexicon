@@ -35,19 +35,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAuthenticateUser } from "@/hooks/useAuthenticateUser";
+import { useAuthentication } from "@/hooks/useAuthentication";
 import { useConversations } from "@/hooks/useConversations";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSignOut } from "@/hooks/useSignOut";
 import { Spinner } from "@heroui/spinner";
 
 export function AppSidebar() {
   const router = useRouter();
-  const { user } = useAuthenticateUser();
-  const { convos, loading, error, newConvo, deleteConvos } =
-    useConversations();
-  const signOut = useSignOut();
+  const { user, signOut, loading, error } = useAuthentication();
+  const { convos, loading, error, newConvo, deleteConvos } = useConversations();
 
   const handleHome = async () => {
     router.push("/dashboard");

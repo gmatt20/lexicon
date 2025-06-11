@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
-import { useAuthenticateUser } from "./useAuthenticateUser";
+import { useAuthenticateUser } from "./useAuthentication";
 import { ChatMessage } from "@/types/ChatMessage";
 import { toast } from "sonner";
 import { useLexWebSocket } from "@/lib/hooks/useLexWebSocket";
