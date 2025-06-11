@@ -83,7 +83,6 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <Collapsible defaultOpen className="group/collapsible">
-                {/* Trigger: Click this to toggle */}
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
@@ -93,8 +92,6 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
-
-                {/* Content: Revealed when open */}
                 <CollapsibleContent className="pl-4">
                   <SidebarMenuSub>
                     {loading ? (
