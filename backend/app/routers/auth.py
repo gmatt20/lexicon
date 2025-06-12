@@ -19,9 +19,6 @@ class UserReq(BaseModel):
 class GuestReq(BaseModel):
   username: str
 
-class DeleteAcc(BaseModel):
-   id: int
-
 @router.post("/sign-up/", status_code=status.HTTP_201_CREATED)
 def sign_up(user: UserReq, session: SessionDep, response: Response):
   responseSupabase = supabase.auth.sign_up(
@@ -124,17 +121,16 @@ def logout():
   return response
 
 @router.delete("/delete-account", status_code=status.HTTP_200_OK)
-def delete_account(userDelete: DeleteAcc, session: SessionDep):
-  user =  session.exec(select(User).where(User.id == userDelete.id)).first()
-  if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+def delete_account(session: SessionDep, user_data=Depends(verify_token)):
+  supabase_user_id = user_data["sub"]
 
-  if not user.supabase_user_id:
-      raise HTTPException(status_code=400, detail="Supabase user ID missing")
+  user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
+  if not user:
+    raise HTTPException(status_code=404, detail="User not found")
 
   supabase.auth.admin.delete_user(user.supabase_user_id)
 
   session.delete(user)
-  session.commit
+  session.commit()
 
   return {"message": "successfully deleted user"}

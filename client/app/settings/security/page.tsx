@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,8 +11,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useAuthentication } from "@/hooks/useAuthentication";
 
-export default function security() {
+export default function Security() {
+  const { user, deleteAccount } = useAuthentication();
+
+  console.log(user);
+
   return (
     <>
       <p>security</p>
@@ -21,14 +28,19 @@ export default function security() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete your account?</DialogTitle>
-            <DialogDescription>All of your conversations, messages, and account information will be deleted. This action cannot be undone.</DialogDescription>
+            <DialogDescription>
+              All of your conversations, messages, and account information will
+              be deleted. This action cannot be undone.
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <DialogClose asChild>
-              <Button variant="destructive">Delete Account</Button>
+              <Button onClick={deleteAccount} variant="destructive">
+                Delete Account
+              </Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

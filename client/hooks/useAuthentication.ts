@@ -130,6 +130,9 @@ export function useAuthentication() {
       const response = await fetch("http://localhost:8000/auth/sign-out/", {
         method: "POST",
         credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
       // If sign out fails, throw toast
       if (!response.ok) {
@@ -148,7 +151,35 @@ export function useAuthentication() {
       toast("Sign out failed on the server side, please try again later.", {});
       console.error(error);
     }
-  }, []);
+  }, [router]);
 
-  return { user, signIn, signUp, signOut, loading, error };
+  const deleteAccount = useCallback(async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/auth/delete-account/",
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        const error = await response.json();
+        toast("Deleting account failed, please try again later.");
+        console.error("Deleting account failed: ", error);
+      } else {
+        signOut();
+        toast("Successfully deleted account");
+        const result = await response.json();
+        console.log("Account delete successful", result);
+      }
+    } catch (error) {
+      toast(
+        "Deleting account failed on the server side, please try again later.",
+        {}
+      );
+      console.error(error);
+    }
+  }, [signOut]);
+
+  return { user, signIn, signUp, signOut, deleteAccount, loading, error };
 }

@@ -10,8 +10,8 @@ class User(SQLModel, table=True):
   profile_picture: str | None = Field(default=None)
   is_guest: bool = Field(default=False)
   # Relationships
-  messages: list["Message"] = Relationship(back_populates="user")
-  conversations: list["Conversation"] = Relationship(back_populates="user")
+  messages: list["Message"] = Relationship(back_populates="user", cascade_delete=True)
+  conversations: list["Conversation"] = Relationship(back_populates="user", cascade_delete=True)
 
 class Conversation(SQLModel, table=True):
   id: int | None = Field(default=None, primary_key=True)
