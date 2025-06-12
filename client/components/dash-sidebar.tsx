@@ -50,7 +50,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-export function AppSidebar() {
+export function DashSidebar() {
   const router = useRouter();
   const { user, signOut } = useAuthentication();
   const { convos, loading, newConvo, deleteConvos } = useConversations();

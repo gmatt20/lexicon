@@ -1,5 +1,5 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { DashSidebar } from "@/components/dash-sidebar";
+import { SettingsSidebar } from "@/components/settings-sidebar";
 
 export default function Layout({
   children,
@@ -8,7 +8,7 @@ export default function Layout({
 }>) {
   return (
     <SidebarProvider>
-      <DashSidebar />
+      <SettingsSidebar />
       <main className="flex-1 flex flex-col relative">
         <SidebarTrigger />
         {children}
