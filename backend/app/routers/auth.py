@@ -16,6 +16,10 @@ class UserReq(BaseModel):
   email: str
   password: str
 
+class UpdateUser(BaseModel):
+   email: str | None
+   username: str | None
+
 class GuestReq(BaseModel):
   username: str
 
@@ -88,6 +92,24 @@ def get_current_user(session: SessionDep, user_data=Depends(verify_token)):
       "is_guest": user.is_guest,
    }
 
+@router.post("/update-me", status_code=status.HTTP_200_OK)
+def update_me(update: UpdateUser, session: SessionDep, user_data=Depends(verify_token)):
+   supabase_user_id = user_data["sub"]
+
+   user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
+   if not user:
+      raise HTTPException(status_code=404, detail="User not found")
+   
+   if update.email:
+      response = supabase.auth.update_user(supabase_user_id, {"email": update.email})
+      if response.error:
+            raise HTTPException(status_code=500, detail="Failed to update user in Supabase")
+   
+   if update.username:
+      user.username = update.username
+      session.add(user)
+      session.commit()
+   return {"message": "Profile updated"}
 
 @router.post("/sign-in-as-guest", status_code=status.HTTP_201_CREATED)
 def sign_in_as_guest(guest: GuestReq, session: SessionDep):
