@@ -1,8 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from db.engine import create_db_and_tables, SessionDep
-from routers import users, messages, conversations, websocket
-from routers import auth, googleAuth
+from routers import messages, conversations, websocket, auth
 from services.get_current_user import get_current_user
 from typing import Annotated
 from starlette import status
@@ -21,11 +20,9 @@ app.add_middleware(
 def on_startup():
   create_db_and_tables()
 
-app.include_router(users.router)
 app.include_router(conversations.router)
 app.include_router(messages.router)
 app.include_router(auth.router)
-app.include_router(googleAuth.router)
 app.include_router(websocket.router)
 
 user_dependency = Annotated[dict, Depends(get_current_user)]
