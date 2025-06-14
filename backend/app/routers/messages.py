@@ -8,6 +8,7 @@ from services.conversationExists import conversation_exists
 from services.get_current_user import get_current_user
 from services.jwt_bearer import verify_token
 from pydantic import BaseModel
+from starlette import status
 
 class MessageCreate(BaseModel):
     conversation_id: int
@@ -21,10 +22,13 @@ UserDep = Annotated[dict, Depends(get_current_user)]
 # - Update message
 # - Delete a single message
 
-router = APIRouter()
+router = APIRouter(
+   prefix="/messages",
+   tags=["Messages"]
+)
 
-# Posts a message
-@router.post("/message/")
+# Posts a new message to a conversation for a user
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=Message)
 def post_message(message_data: MessageCreate, session: SessionDep, user_data=Depends(verify_token)) -> Message:
     user_id = user_data["sub"]
 

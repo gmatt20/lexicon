@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Query, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from db.engine import SessionDep
-from models.models import Conversation, User
+from models.models import Conversation
 from sqlmodel import select
-from typing import Annotated
 from pydantic import BaseModel
-from services.userExists import user_exists
 from services.jwt_bearer import verify_token
 from starlette import status
 from datetime import datetime
+from services.query_user import query_user
 
 # TURD: Complete the CRUD
 # TODO:
@@ -31,12 +30,8 @@ class ConversationResponse(BaseModel):
 # Creates a new conversation
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=ConversationResponse)
 def new_conversation(conversation: ConversationTitle, session: SessionDep, user_data=Depends(verify_token)) -> ConversationResponse:
-  user_id = user_data["sub"]
+  user = query_user(user_data["sub"], session)
 
-  user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
-  if not user:
-    raise HTTPException(status_code=404, detail="User not found")
-  
   conversation = Conversation(user_id=user.id, title=conversation.title)
   session.add(conversation)
   session.commit()
@@ -47,10 +42,7 @@ def new_conversation(conversation: ConversationTitle, session: SessionDep, user_
 # Gets all conversations for a user
 @router.get("/", status_code=status.HTTP_200_OK, response_model=list[ConversationResponse])
 def get_conversations(session: SessionDep, user_data=Depends(verify_token)) -> list[ConversationResponse]:
-  user_id = user_data["sub"]
-  user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
-  if not user:
-    raise HTTPException(status_code=404, detail="User not found")
+  user = query_user(user_data["sub"], session)
 
   conversations = session.exec(select(Conversation).where(Conversation.user_id == user.id)).all()
   return conversations
@@ -58,10 +50,7 @@ def get_conversations(session: SessionDep, user_data=Depends(verify_token)) -> l
 # Gets a specific conversation by ID
 @router.get("/{conversation_id}", status_code=status.HTTP_200_OK, response_model=ConversationResponse)
 def get_conversation(conversation_id: int, session: SessionDep, user_data=Depends(verify_token)) -> ConversationResponse:
-  supabase_user_id = user_data["sub"]
-  user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
-  if not user:
-    raise HTTPException(status_code=404, detail="User not found")
+  user = query_user(user_data["sub"], session)
 
   conversation = session.exec(select(Conversation).where(Conversation.id == conversation_id, Conversation.user_id == user.id)).first()
   if not conversation:
@@ -72,10 +61,7 @@ def get_conversation(conversation_id: int, session: SessionDep, user_data=Depend
 # Updates a conversation's title
 @router.put("/{conversation_id}", status_code=status.HTTP_200_OK, response_model=ConversationResponse)
 def update_conversation(conversation_id: int, conversation_title: ConversationTitle, session: SessionDep, user_data=Depends(verify_token)) -> ConversationResponse:
-  supabase_user_id = user_data["sub"]
-  user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
-  if not user:
-    raise HTTPException(status_code=404, detail="User not found")
+  user = query_user(user_data["sub"], session)
   
   conversation = session.exec(select(Conversation).where(Conversation.id == conversation_id, Conversation.user_id == user.id)).first()
   if not conversation:
@@ -91,10 +77,7 @@ def update_conversation(conversation_id: int, conversation_title: ConversationTi
 # Deletes all conversations for a user
 @router.delete("/", status_code=status.HTTP_200_OK, response_model=dict)
 def delete_all_conversations(session: SessionDep, user_data=Depends(verify_token)) -> dict:
-  user_id = user_data["sub"]
-  user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
-  if not user:
-    raise HTTPException(status_code=404, detail="User not found")
+  user = query_user(user_data["sub"], session)
   
   conversations = session.exec(select(Conversation).where(Conversation.user_id == user.id)).all()
   if not conversations:
@@ -109,11 +92,8 @@ def delete_all_conversations(session: SessionDep, user_data=Depends(verify_token
 # Deletes a specific conversation by ID
 @router.delete("/{conversation_id}", status_code=status.HTTP_200_OK, response_model=dict)
 def delete_conversation(conversation_id: int, session: SessionDep, user_data=Depends(verify_token)) -> dict:
-    supabase_user_id = user_data["sub"]
-    user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
-    if not user:
-      raise HTTPException(status_code=404, detail="User not found")
-    
+    user = query_user(user_data["sub"], session)
+
     conversation = session.exec(select(Conversation).where(Conversation.id == conversation_id, Conversation.user_id == user.id)).first()
     if not conversation:
       raise HTTPException(status_code=404, detail="Conversation not found")
