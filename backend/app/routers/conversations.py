@@ -6,6 +6,8 @@ from typing import Annotated
 from pydantic import BaseModel
 from services.userExists import user_exists
 from services.jwt_bearer import verify_token
+from starlette import status
+from datetime import datetime
 
 # TURD: Complete the CRUD
 # TODO:
@@ -13,18 +15,26 @@ from services.jwt_bearer import verify_token
 # - Protected get specific conversation
 # - Protected delete specific conversations including its messages
 
-router = APIRouter()
+router = APIRouter(
+  prefix="/conversations",
+  tags=["Conversations"]
+)
 
-class ConversationData(BaseModel):
-  title: str | None = "New Chat"
+class ConversationTitle(BaseModel):
+  title: str
+class ConversationResponse(BaseModel):
+  id: int
+  user_id: int
+  title: str
+  time_created: datetime
 
-@router.post("/conversation/")
-def new_conversation(conversation: ConversationData, session: SessionDep, user_data=Depends(verify_token)):
+# Creates a new conversation
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=ConversationResponse)
+def new_conversation(conversation: ConversationTitle, session: SessionDep, user_data=Depends(verify_token)) -> ConversationResponse:
   user_id = user_data["sub"]
 
   user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
   if not user:
-
     raise HTTPException(status_code=404, detail="User not found")
   
   conversation = Conversation(user_id=user.id, title=conversation.title)
@@ -32,32 +42,83 @@ def new_conversation(conversation: ConversationData, session: SessionDep, user_d
   session.commit()
   session.refresh(conversation)
 
-  return{"conversation_title": conversation.title, "user_id": conversation.user_id, "id": conversation.id, "time_created": conversation.time_created}
+  return conversation
 
-@router.get("/conversations/")
-def get_conversations(session: SessionDep, user_data=Depends(verify_token)):
+# Gets all conversations for a user
+@router.get("/", status_code=status.HTTP_200_OK, response_model=list[ConversationResponse])
+def get_conversations(session: SessionDep, user_data=Depends(verify_token)) -> list[ConversationResponse]:
   user_id = user_data["sub"]
   user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
   if not user:
     raise HTTPException(status_code=404, detail="User not found")
-  
 
   conversations = session.exec(select(Conversation).where(Conversation.user_id == user.id)).all()
-  
   return conversations
 
-@router.delete("/conversations/")
-def delete_all_conversations(session: SessionDep, user_data=Depends(verify_token)):
+# Gets a specific conversation by ID
+@router.get("/{conversation_id}", status_code=status.HTTP_200_OK, response_model=ConversationResponse)
+def get_conversation(conversation_id: int, session: SessionDep, user_data=Depends(verify_token)) -> ConversationResponse:
+  supabase_user_id = user_data["sub"]
+  user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
+  if not user:
+    raise HTTPException(status_code=404, detail="User not found")
+
+  conversation = session.exec(select(Conversation).where(Conversation.id == conversation_id, Conversation.user_id == user.id)).first()
+  if not conversation:
+    raise HTTPException(status_code=404, detail="Conversation not found")
+
+  return conversation
+
+# Updates a conversation's title
+@router.put("/{conversation_id}", status_code=status.HTTP_200_OK, response_model=ConversationResponse)
+def update_conversation(conversation_id: int, conversation_title: ConversationTitle, session: SessionDep, user_data=Depends(verify_token)) -> ConversationResponse:
+  supabase_user_id = user_data["sub"]
+  user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
+  if not user:
+    raise HTTPException(status_code=404, detail="User not found")
+  
+  conversation = session.exec(select(Conversation).where(Conversation.id == conversation_id, Conversation.user_id == user.id)).first()
+  if not conversation:
+    raise HTTPException(status_code=404, detail="Conversation not found")
+  
+  conversation.title = conversation_title.title
+  session.add(conversation)
+  session.commit()
+  session.refresh(conversation)
+
+  return conversation
+
+# Deletes all conversations for a user
+@router.delete("/", status_code=status.HTTP_200_OK, response_model=dict)
+def delete_all_conversations(session: SessionDep, user_data=Depends(verify_token)) -> dict:
   user_id = user_data["sub"]
   user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
   if not user:
     raise HTTPException(status_code=404, detail="User not found")
   
   conversations = session.exec(select(Conversation).where(Conversation.user_id == user.id)).all()
+  if not conversations:
+    return {"deleted": 0}
 
   for conversation in conversations:
     session.delete(conversation)
   session.commit()
 
   return{"deleted all conversations": True}
-  
+
+# Deletes a specific conversation by ID
+@router.delete("/{conversation_id}", status_code=status.HTTP_200_OK, response_model=dict)
+def delete_conversation(conversation_id: int, session: SessionDep, user_data=Depends(verify_token)) -> dict:
+    supabase_user_id = user_data["sub"]
+    user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
+    if not user:
+      raise HTTPException(status_code=404, detail="User not found")
+    
+    conversation = session.exec(select(Conversation).where(Conversation.id == conversation_id, Conversation.user_id == user.id)).first()
+    if not conversation:
+      raise HTTPException(status_code=404, detail="Conversation not found")
+    
+    session.delete(conversation)
+    session.commit()
+
+    return {"message": "Conversation deleted successfully"}

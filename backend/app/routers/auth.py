@@ -11,7 +11,7 @@ from gotrue.errors import AuthApiError
 
 router = APIRouter(
   prefix="/auth",
-  tags=["auth"]
+  tags=["Auth"]
 )
 class UserReq(BaseModel):
   email: str
