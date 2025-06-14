@@ -7,6 +7,7 @@ from models.models import User
 from db.engine import supabase
 from sqlmodel import select
 from services.jwt_bearer import verify_token
+from gotrue.errors import AuthApiError
 
 router = APIRouter(
   prefix="/auth",
@@ -83,6 +84,8 @@ def get_current_user(session: SessionDep, user_data=Depends(verify_token)):
    supabase_user_id = user_data["sub"]
 
    user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
+   user_supabase = supabase.auth.admin.get_user_by_id(supabase_user_id)
+   email = user_supabase.user.email
    if not user:
       raise HTTPException(status_code=404, detail="User not found")
    
@@ -90,26 +93,37 @@ def get_current_user(session: SessionDep, user_data=Depends(verify_token)):
       "id": user.id,
       "username": user.username,
       "is_guest": user.is_guest,
+      "email": email,
    }
 
-@router.post("/update-me", status_code=status.HTTP_200_OK)
+@router.put("/update-me", status_code=status.HTTP_200_OK)
 def update_me(update: UpdateUser, session: SessionDep, user_data=Depends(verify_token)):
-   supabase_user_id = user_data["sub"]
+  response = None
+  supabase_user_id = user_data["sub"]
 
-   user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
-   if not user:
+  user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
+  if not user:
       raise HTTPException(status_code=404, detail="User not found")
+
+  if update.email:
+        try:
+          response = supabase.auth.admin.update_user_by_id(supabase_user_id, {"email": update.email})
+          print(response)
+        except:
+          raise HTTPException(status_code=409, detail="Email is already in use")
    
-   if update.email:
-      response = supabase.auth.update_user(supabase_user_id, {"email": update.email})
-      if response.error:
-            raise HTTPException(status_code=500, detail="Failed to update user in Supabase")
-   
-   if update.username:
-      user.username = update.username
-      session.add(user)
-      session.commit()
-   return {"message": "Profile updated"}
+  user_supabase = supabase.auth.admin.get_user_by_id(supabase_user_id)
+  email = user_supabase.user.email
+
+  if update.username:
+    user.username = update.username
+    session.add(user)
+    session.commit()
+    
+  return {
+      "username": user.username,
+      "email": email,
+      }
 
 @router.post("/sign-in-as-guest", status_code=status.HTTP_201_CREATED)
 def sign_in_as_guest(guest: GuestReq, session: SessionDep):

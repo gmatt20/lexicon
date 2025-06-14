@@ -7,10 +7,11 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { SignIn } from "@/types/SignIn";
 import { SignUp } from "@/types/SignUp";
+import { UpdateAccount } from "@/types/UpdateAccount";
 
 export function useAuthentication() {
   const [user, setUser] = useState<User>();
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<Error | "">("");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -181,5 +182,45 @@ export function useAuthentication() {
     }
   }, [signOut]);
 
-  return { user, signIn, signUp, signOut, deleteAccount, loading, error };
+  const updateAccount = async (formData: UpdateAccount) => {
+    console.log(formData);
+    try {
+      const response = await fetch("http://localhost:8000/auth/update-me/", {
+        method: "PUT",
+        body: JSON.stringify(formData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        toast("Email is already in use");
+        console.error("Updating account failed: ", error);
+        setError(error.detail);
+      } else {
+        const result = await response.json();
+        toast(`Successfully update account. 
+                 username: ${result.username}
+                 email: ${result.email}`);
+        console.log("Update successful", result);
+      }
+    } catch (error) {
+      toast(
+        "Updating account failed on the server side, please try again later."
+      );
+      console.error(error);
+    }
+  };
+
+  return {
+    user,
+    signIn,
+    signUp,
+    signOut,
+    deleteAccount,
+    updateAccount,
+    loading,
+    error,
+  };
 }

@@ -1,7 +1,9 @@
-export default function account() {
+import Account from "@/components/account";
+
+export default function AccountPage() {
   return (
-    <>
-      <p>account</p>
-    </>
+    <div>
+      <Account />
+    </div>
   );
 }
