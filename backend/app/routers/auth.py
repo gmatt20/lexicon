@@ -15,7 +15,7 @@ router = APIRouter(
 )
 class UserReq(BaseModel):
   email: str
-  username: str | None = None
+  username: str | None
   password: str
 
 class UpdateUser(BaseModel):
@@ -34,18 +34,15 @@ def sign_up(user: UserReq, session: SessionDep, response: Response):
         "password": user.password,
       }
     )
-  except AuthApiError as e:
-     if e.code == "auth/email-already-in-use":
-        raise HTTPException(status_code=409, detail="Email is already in use")
-     else:
-      raise HTTPException(status_code=500, detail="Internal server error")
+  except Exception as e:
+    raise HTTPException(status_code=500, detail="Internal server error")
 
   supabase_user_id = responseSupabase.user.id
   username = user.email.split("@")[0]
 
   new_user = User(
     supabase_user_id=supabase_user_id,
-    username=UserReq.username or username,
+    username=user.username or username,
     is_guest=False,
   )
 
