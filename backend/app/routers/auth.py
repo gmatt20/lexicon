@@ -13,9 +13,12 @@ router = APIRouter(
   prefix="/auth",
   tags=["Auth"]
 )
-class UserReq(BaseModel):
+class NewUserReq(BaseModel):
   email: str
   username: str | None
+  password: str
+class UserSignIn(BaseModel):
+  email: str
   password: str
 
 class UpdateUser(BaseModel):
@@ -26,7 +29,7 @@ class GuestReq(BaseModel):
   username: str
 
 @router.post("/sign-up/", status_code=status.HTTP_201_CREATED)
-def sign_up(user: UserReq, session: SessionDep, response: Response):
+def sign_up(user: NewUserReq, session: SessionDep, response: Response):
   try:
     responseSupabase = supabase.auth.sign_up(
       {
@@ -59,7 +62,7 @@ def sign_up(user: UserReq, session: SessionDep, response: Response):
   return {"message": "User created successfully", "user_id": new_user.id}
 
 @router.post("/sign-in/", status_code=status.HTTP_200_OK)
-def sign_in(user: UserReq, response: Response):
+def sign_in(user: UserSignIn, response: Response):
     try:
         responseSupabase = supabase.auth.sign_in_with_password({
             "email": user.email,
