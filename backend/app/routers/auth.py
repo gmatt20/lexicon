@@ -15,6 +15,7 @@ router = APIRouter(
 )
 class UserReq(BaseModel):
   email: str
+  username: str | None = None
   password: str
 
 class UpdateUser(BaseModel):
@@ -26,19 +27,25 @@ class GuestReq(BaseModel):
 
 @router.post("/sign-up/", status_code=status.HTTP_201_CREATED)
 def sign_up(user: UserReq, session: SessionDep, response: Response):
-  responseSupabase = supabase.auth.sign_up(
-    {
-      "email": user.email,
-      "password": user.password,
-    }
-  )
+  try:
+    responseSupabase = supabase.auth.sign_up(
+      {
+        "email": user.email,
+        "password": user.password,
+      }
+    )
+  except AuthApiError as e:
+     if e.code == "auth/email-already-in-use":
+        raise HTTPException(status_code=409, detail="Email is already in use")
+     else:
+      raise HTTPException(status_code=500, detail="Internal server error")
 
   supabase_user_id = responseSupabase.user.id
   username = user.email.split("@")[0]
 
   new_user = User(
     supabase_user_id=supabase_user_id,
-    username=username,
+    username=UserReq.username or username,
     is_guest=False,
   )
 
@@ -149,7 +156,7 @@ def sign_in_as_guest(guest: GuestReq, session: SessionDep):
   return {"Signed in as guest": response.user.id}
 
 @router.post("/sign-out", status_code=status.HTTP_200_OK)
-def logout():
+def logout(user_data=Depends(verify_token)):
   supabase.auth.sign_out()
   response = JSONResponse(content={"message": "Signed out"})
   response.delete_cookie("access_token")

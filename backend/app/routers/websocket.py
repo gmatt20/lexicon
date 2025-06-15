@@ -1,16 +1,12 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketException, Depends, HTTPException, Cookie, Query, status
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketException, Query, status
 from lexAI.lex import Lexercise
-from db.engine import supabase, SessionDep
+from db.engine import SessionDep
 from models.models import Message
 from sqlmodel import Session, select
-import asyncio
-from jose import jwt, JWTError
+from jose import jwt
 from dotenv import load_dotenv
 import os
-from services.jwt_bearer import verify_token
 from models.models import Conversation, User
-from typing import Annotated
-from services.jwt_bearer import verify_token
 
 load_dotenv()
 

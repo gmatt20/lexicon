@@ -8,17 +8,10 @@ from starlette import status
 from datetime import datetime
 from services.query_user import query_user
 
-# TURD: Complete the CRUD
-# TODO:
-# - Update conversation
-# - Protected get specific conversation
-# - Protected delete specific conversations including its messages
-
 router = APIRouter(
   prefix="/conversations",
   tags=["Conversations"]
 )
-
 class ConversationTitle(BaseModel):
   title: str
 class ConversationResponse(BaseModel):
