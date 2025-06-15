@@ -35,7 +35,9 @@ def sign_up(user: UserReq, session: SessionDep, response: Response):
       }
     )
   except Exception as e:
-    raise HTTPException(status_code=500, detail="Internal server error")
+    if "user already registered" in str(e).lower():
+       raise HTTPException(status_code=409, detail="User already registered")
+    raise HTTPException(status_code=500, detail=f"Internal server error {e}")
 
   supabase_user_id = responseSupabase.user.id
   username = user.email.split("@")[0]
