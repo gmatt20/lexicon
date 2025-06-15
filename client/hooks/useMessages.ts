@@ -1,8 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useAuthentication } from "./useAuthentication";
 import { ChatMessage } from "@/types/ChatMessage";
-import { toast } from "sonner";
 import { useLexWebSocket } from "@/lib/hooks/useLexWebSocket";
 import { useHandleTextMessage } from "@/lib/hooks/useHandleTextMessage";
 
@@ -50,6 +49,24 @@ export function useMessages() {
     }
   }, [user, userLoading, conversationID]);
 
+  const deleteMessageById = useCallback(async (messageID: number, conversationId: number) => {
+    try {
+      const response = await fetch(`http://localhost:8000/messages/${conversationId}/${messageID}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete message");
+      
+      setMessages((prevMessages) =>
+        prevMessages.filter((message) => message.id !== messageID)
+      );
+    } catch (error) {
+      console.error("Error deleting message:", error);
+      setError(error as Error);
+    }
+  }, []);
+
   // Set up websocket
   useLexWebSocket({ conversationId: Number(conversationID), setMessages }, ws);
   const handleTextMessage = useHandleTextMessage(ws, setMessages);
@@ -60,6 +77,7 @@ export function useMessages() {
 
   return {
     messages,
+    deleteMessageById,
     error,
     loading: loading || userLoading,
     handleTextMessage,

@@ -2,6 +2,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Lexicon from "@/public/lexicon.webp";
 import { ChatMessage } from "@/types/ChatMessage";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 type Props = {
   msg: ChatMessage;
@@ -15,9 +21,18 @@ export default function ChatBubble({ msg }: Props) {
     <div className="flex flex-col justify-between">
       {msg.role === "user" ? (
         <div className="flex justify-end items-end my-5">
-          <Card className="bg-primary-foreground text-black max-w-[60%]">
+          <Card
+            className="bg-primary-foreground text-black max-w-[60%] inline">
             <CardContent>
-              <p className="leading-6 text-sm">{msg.content}</p>
+              <ContextMenu>
+                <ContextMenuTrigger>
+                  <p className="leading-6 text-sm">{msg.content}</p>
+                </ContextMenuTrigger>
+                <ContextMenuContent>
+                  <ContextMenuItem>Edit</ContextMenuItem>
+                  <ContextMenuItem>Delete</ContextMenuItem>
+                </ContextMenuContent>
+              </ContextMenu>
             </CardContent>
           </Card>
           <Avatar>

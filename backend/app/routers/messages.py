@@ -47,12 +47,12 @@ def get_convo_messages(conversation_id: int, session: SessionDep, user_data=Depe
 
   return messages
 
-# Deletes a message by ID for a user
-@router.delete("/{message_id}", status_code=status.HTTP_200_OK, response_model=dict)
-def delete_message(message_id: int, session: SessionDep, user_data=Depends(verify_token)) -> dict:
+# Deletes a message by ID and conversation ID for a user
+@router.delete("/{conversation_id}/{message_id}", status_code=status.HTTP_200_OK, response_model=dict)
+def delete_message(conversation_id: int, message_id: int, session: SessionDep, user_data=Depends(verify_token)) -> dict:
     user = query_user(user_data["sub"], session)
 
-    message = session.exec(select(Message).where(Message.id == message_id, Message.user_id == user.id)).first()
+    message = session.exec(select(Message).where(Message.id == message_id, Message.user_id == user.id, Message.conversation_id == conversation_id)).first()
     if not message:
         raise HTTPException(status_code=404, detail="Message not found")
 
