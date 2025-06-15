@@ -54,15 +54,38 @@ export function useConversations() {
     }
   }, []);
 
+  const deleteConvoById = useCallback(async (id: number) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:8000/conversations/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) throw new Error("Not authenticated");
+      const updatedConvos = convos.filter((convo) => convo.id !== id);
+      setConvos(updatedConvos);
+      setLoading(false);
+      router.push("/dashboard");
+      toast("Successfully delete conversation");
+    } catch (error) {
+      toast("Error deleting conversation, try again later.");
+      setError(error as Error);
+      setLoading(false);
+    }
+  });
+
   const deleteConvos = useCallback(async () => {
-    if(convos.length !== 0){
+    if (convos.length !== 0) {
       setLoading(true);
       try {
         const response = await fetch("http://localhost:8000/conversations/", {
           method: "DELETE",
           credentials: "include",
         });
-  
+
         if (!response.ok) throw new Error("Not authenticated");
         toast("Successfully deleted all conversations");
         router.push("/dashboard");
@@ -77,9 +100,8 @@ export function useConversations() {
       } finally {
         setLoading(false);
       }
-    }
-    else{
-      toast("Conversations are already deletes")
+    } else {
+      toast("Conversations are already deletes");
     }
   }, []);
 
@@ -87,5 +109,5 @@ export function useConversations() {
     fetchConvos();
   }, [fetchConvos]);
 
-  return { convos, loading, error, fetchConvos, newConvo, deleteConvos };
+  return { convos, loading, error, fetchConvos, newConvo, deleteConvoById, deleteConvos };
 }

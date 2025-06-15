@@ -7,6 +7,7 @@ import {
   User2,
   ChevronUp,
   ChevronRight,
+  Ellipsis,
 } from "lucide-react";
 
 import {
@@ -53,7 +54,8 @@ import { Button } from "@/components/ui/button";
 export function DashSidebar() {
   const router = useRouter();
   const { user, signOut } = useAuthentication();
-  const { convos, loading, newConvo, deleteConvos } = useConversations();
+  const { convos, loading, newConvo, deleteConvoById, deleteConvos } =
+    useConversations();
 
   const handleHome = async () => {
     router.push("/dashboard");
@@ -101,10 +103,52 @@ export function DashSidebar() {
                       <Spinner />
                     ) : (
                       convos.map((convo, i) => (
-                        <SidebarMenuSubItem key={i}>
+                        <SidebarMenuSubItem
+                          className="flex justify-between"
+                          key={i}>
                           <Link href={`/dashboard/${convo.id}`}>
                             {convo.title}
                           </Link>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger>
+                              <Ellipsis
+                                className="text-zinc-600 cursor-pointer"
+                                size={20}
+                              />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuItem>Rename Chat</DropdownMenuItem>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <span className="hover:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">
+                                    Delete Chat
+                                  </span>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Delete this chat?</DialogTitle>
+                                    <DialogDescription>
+                                      This action cannot be undone.
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <DialogFooter>
+                                    <DialogClose asChild>
+                                      <Button variant="outline">Cancel</Button>
+                                    </DialogClose>
+                                    <DialogClose asChild>
+                                      <Button
+                                        variant="destructive"
+                                        onClick={() =>
+                                          deleteConvoById(convo.id)
+                                        }>
+                                        Delete
+                                      </Button>
+                                    </DialogClose>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </SidebarMenuSubItem>
                       ))
                     )}
