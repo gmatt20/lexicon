@@ -92,11 +92,14 @@ def sign_in(user: UserSignIn, response: Response):
 def get_current_user(session: SessionDep, user_data=Depends(verify_token)):
    supabase_user_id = user_data["sub"]
 
-   user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
-   user_supabase = supabase.auth.admin.get_user_by_id(supabase_user_id)
-   email = user_supabase.user.email
-   if not user:
-      raise HTTPException(status_code=404, detail="User not found")
+   try:
+    user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()
+    user_supabase = supabase.auth.admin.get_user_by_id(supabase_user_id)
+    email = user_supabase.user.email
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+   except AuthApiError as e:
+    raise HTTPException(status_code=500, detail=f"Supabase error: {e}")
    
    return{
       "id": user.id,

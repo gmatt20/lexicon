@@ -21,6 +21,9 @@ export function useAuthentication() {
         const response = await fetch("http://localhost:8000/auth/me/", {
           method: "GET",
           credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
         if (!response.ok) throw new Error("Not authenticated");
         const data = await response.json();
