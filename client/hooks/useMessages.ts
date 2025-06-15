@@ -25,7 +25,7 @@ export function useMessages() {
       // Loads authenticated user's messages
       // Makes a get request to fetch user messages based on conversation
       const response = await fetch(
-        `http://localhost:8000/messages/${user?.id}/${conversationID}`,
+        `http://localhost:8000/messages/${conversationID}`,
         {
           method: "GET",
           // Includes the cookies

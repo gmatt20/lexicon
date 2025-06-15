@@ -91,6 +91,7 @@ def sign_in(user: UserSignIn, response: Response):
 @router.get("/me/")
 def get_current_user(session: SessionDep, user_data=Depends(verify_token)):
    supabase_user_id = user_data["sub"]
+  #  print(f"Supabase User ID: {supabase_user_id}")
 
    try:
     user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()

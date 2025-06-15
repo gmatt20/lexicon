@@ -2,11 +2,11 @@ import Landing from "@/components/landing";
 import Navbar from "@/components/navbar";
 
 export default async function Home() {
-  await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve("delay");
-    }, 5000);
-  });
+  // await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     resolve("delay");
+  //   }, 5000);
+  // });
   return (
     <>
       <Navbar />

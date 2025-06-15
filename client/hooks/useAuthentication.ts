@@ -29,6 +29,7 @@ export function useAuthentication() {
         const data = await response.json();
         setUser(data);
       } catch (error) {
+        setUser(undefined);
         setError(error as Error);
       } finally {
         setLoading(false);

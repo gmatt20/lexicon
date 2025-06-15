@@ -33,7 +33,7 @@ export function useConversations() {
 
   const newConvo = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:8000/conversation/", {
+      const response = await fetch("http://localhost:8000/conversations/", {
         method: "POST",
         credentials: "include",
         headers: {
