@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Request, status, Depends
+from fastapi import HTTPException, Request, status
 from jose import JWTError, jwt
 from dotenv import load_dotenv
 import os

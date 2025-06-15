@@ -1,9 +1,7 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from db.engine import create_db_and_tables, SessionDep
+from db.engine import create_db_and_tables
 from routers import messages, conversations, websocket, auth
-from services.get_current_user import get_current_user
-from typing import Annotated
 from starlette import status
 
 app = FastAPI()
@@ -25,14 +23,6 @@ app.include_router(messages.router)
 app.include_router(auth.router)
 app.include_router(websocket.router)
 
-user_dependency = Annotated[dict, Depends(get_current_user)]
-
-@app.get("/")
-def root():
-  return{"message": "Welcome to the Lexicon App!"}
-
-@app.get("/current-user", status_code=status.HTTP_200_OK)
-async def user(user: user_dependency, session: SessionDep):
-  if user is None:
-    raise HTTPException(status_code=401, detail="Authentication Failed")
-  return {"User": user}
+@app.get("/", status_code=status.HTTP_200_OK, response_model=dict)
+def root() -> dict:
+  return {"message": "Welcome to the Lexicon App!"}
