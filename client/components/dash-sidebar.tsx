@@ -49,19 +49,38 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export function DashSidebar() {
   const router = useRouter();
   const { user, signOut } = useAuthentication();
-  const { convos, loading, newConvo, deleteConvoById, deleteConvos } =
-    useConversations();
+  const {
+    convos,
+    loading,
+    newConvo,
+    renameConvoById,
+    deleteConvoById,
+    deleteConvos,
+  } = useConversations();
 
   const handleHome = async () => {
     router.push("/dashboard");
   };
   const handleSettings = () => {
     router.push("/settings");
+  };
+  const FormAction = async (
+    e: React.FormEvent<HTMLFormElement>,
+    convoId: number
+  ) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    console.log(formData);
+    const name = formData.get("name") as string;
+    console.log(name);
+    renameConvoById(convoId, name);
   };
 
   return (
@@ -117,7 +136,47 @@ export function DashSidebar() {
                               />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                              <DropdownMenuItem>Rename Chat</DropdownMenuItem>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <span className="hover:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">
+                                    Rename Chat
+                                  </span>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[425px]">
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      Rename current chat
+                                    </DialogTitle>
+                                  </DialogHeader>
+                                  <form
+                                    onSubmit={(e) => FormAction(e, convo.id)}>
+                                    <div className="grid gap-4">
+                                      <div className="grid gap-3">
+                                        <Label htmlFor="name">
+                                          New chat name
+                                        </Label>
+                                        <Input
+                                          id="name"
+                                          name="name"
+                                          defaultValue={convo.title}
+                                        />
+                                      </div>
+                                    </div>
+                                    <DialogFooter className="mt-5">
+                                      <DialogClose asChild>
+                                        <Button variant="outline">
+                                          Cancel
+                                        </Button>
+                                      </DialogClose>
+                                      <DialogClose asChild>
+                                        <Button type="submit">
+                                          Save changes
+                                        </Button>
+                                      </DialogClose>
+                                    </DialogFooter>
+                                  </form>
+                                </DialogContent>
+                              </Dialog>
                               <Dialog>
                                 <DialogTrigger asChild>
                                   <span className="hover:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">
