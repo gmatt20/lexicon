@@ -1,7 +1,7 @@
 export type ChatMessage = {
   id: number;
-  conversationId: number;
-  userId: number;
+  conversation_id: number;
+  user_id: number;
   role: string;
   content: string;
 };

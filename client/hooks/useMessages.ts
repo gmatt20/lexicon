@@ -50,6 +50,7 @@ export function useMessages() {
   }, [user, userLoading, conversationID]);
 
   const deleteMessageById = useCallback(async (messageID: number, conversationId: number) => {
+    console.log("Deleting message with ID:", messageID, "from conversation:", conversationId);
     try {
       const response = await fetch(`http://localhost:8000/messages/${conversationId}/${messageID}`, {
         method: "DELETE",

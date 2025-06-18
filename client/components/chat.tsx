@@ -5,8 +5,14 @@ import InputChat from "@/components/InputChat";
 import { useMessages } from "@/hooks/useMessages";
 
 export default function Chat() {
-  const { messages, error, loading, handleTextMessage, latestMessageRef } =
-    useMessages();
+  const {
+    messages,
+    error,
+    loading,
+    handleTextMessage,
+    latestMessageRef,
+    deleteMessageById,
+  } = useMessages();
 
   return (
     <>
@@ -16,7 +22,14 @@ export default function Chat() {
             {error.message || "Something went wrong"}
           </div>
         )}
-        {!loading && messages.map((msg, i) => <ChatBubble msg={msg} key={i} />)}
+        {!loading &&
+          messages.map((msg, i) => (
+            <ChatBubble
+              msg={msg}
+              key={i}
+              onDelete={() => deleteMessageById(msg.id, msg.conversation_id)}
+            />
+          ))}
         <div ref={latestMessageRef} />
       </div>
       <form
