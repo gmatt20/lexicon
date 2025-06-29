@@ -42,7 +42,8 @@ export default function Chat() {
       </div>
       <form
         className="absolute bottom-0 left-0 right-0 bg-white p-4 border-t z-10"
-        onSubmit={handleTextMessage}>
+        onSubmit={handleTextMessage}
+      >
         <InputChat editContent={editContent} />
       </form>
     </>

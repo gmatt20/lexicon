@@ -29,7 +29,7 @@ export function useMessages() {
           method: "GET",
           // Includes the cookies
           credentials: "include",
-        }
+        },
       );
       if (response.ok) {
         const data = await response.json();
@@ -44,53 +44,68 @@ export function useMessages() {
       }
       setLoading(false);
     };
-    if(!userLoading) {
+    if (!userLoading) {
       fetchMessages();
     }
   }, [user, userLoading, conversationID]);
 
-  const deleteMessageById = useCallback(async (messageID: number, conversationId: number) => {
-    try {
-      const response = await fetch(`http://localhost:8000/messages/${conversationId}/${messageID}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+  const deleteMessageById = useCallback(
+    async (messageID: number, conversationId: number) => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/messages/${conversationId}/${messageID}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          },
+        );
 
-      if (!response.ok) throw new Error("Failed to delete message");
-      
-      setMessages((prevMessages) =>
-        prevMessages.filter((message) => message.id !== messageID)
-      );
-    } catch (error) {
-      console.error("Error deleting message:", error);
-      setError(error as Error);
-    }
-  }, []);
+        if (!response.ok) throw new Error("Failed to delete message");
 
-  const editMessageById = useCallback(async (messageID: number, conversationId: number, newContent: string) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/messages/${conversationId}/${messageID}`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          body: JSON.stringify({conversation_id: conversationId, role: "user", content: newContent})
-        }
-      );
+        setMessages((prevMessages) =>
+          prevMessages.filter((message) => message.id !== messageID),
+        );
+      } catch (error) {
+        console.error("Error deleting message:", error);
+        setError(error as Error);
+      }
+    },
+    [],
+  );
 
-      if (!response.ok) throw new Error("Failed to edit message");
+  const editMessageById = useCallback(
+    async (messageID: number, conversationId: number, newContent: string) => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/messages/${conversationId}/${messageID}`,
+          {
+            method: "PATCH",
+            credentials: "include",
+            body: JSON.stringify({
+              conversation_id: conversationId,
+              role: "user",
+              content: newContent,
+            }),
+          },
+        );
 
-      const updatedMessage = await response.json();
-      setMessages((prevMessages) =>
-        prevMessages.map((message) =>
-          message.id === messageID ? { ...message, content: updatedMessage.content } : message
-        )
-      );
-    } catch (error) {
-      console.error("Error editing message:", error);
-      setError(error as Error);
-    }
-  }, []);
+        if (!response.ok) throw new Error("Failed to edit message");
+
+        const updatedMessage = await response.json();
+        setMessages((prevMessages) =>
+          prevMessages.map((message) =>
+            message.id === messageID
+              ? { ...message, content: updatedMessage.content }
+              : message,
+          ),
+        );
+      } catch (error) {
+        console.error("Error editing message:", error);
+        setError(error as Error);
+      }
+    },
+    [],
+  );
 
   // Set up websocket
   useLexWebSocket({ conversationId: Number(conversationID), setMessages }, ws);

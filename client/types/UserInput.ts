@@ -3,4 +3,4 @@ export type UserInput = {
   conversation_id: number;
   role: string;
   content: string;
-}
+};

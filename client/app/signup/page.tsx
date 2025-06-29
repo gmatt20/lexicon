@@ -10,7 +10,7 @@ import { useAuthentication } from "@/hooks/useAuthentication";
 
 export default function SignUpForm() {
   const { signUp } = useAuthentication();
-  
+
   const [formData, setFormData] = useState<SignUp>({
     username: "",
     email: "",
@@ -27,7 +27,8 @@ export default function SignUpForm() {
   return (
     <div
       className="w-screen h-screen"
-      style={{ backgroundImage: `url(${Abstract.src})` }}>
+      style={{ backgroundImage: `url(${Abstract.src})` }}
+    >
       <div className="flex items-center justify-center flex-col h-full">
         <div className="min-w-[50%] max-w-[30%] shadow-lg flex items-center justify-center flex-col bg-white py-10 rounded-2xl">
           <div>

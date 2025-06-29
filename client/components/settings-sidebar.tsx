@@ -114,7 +114,8 @@ export function SettingsSidebar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 side="top"
-                className="w-[--radix-popper-anchor-width]">
+                className="w-[--radix-popper-anchor-width]"
+              >
                 <DropdownMenuItem onClick={signOut}>
                   <span>Sign out</span>
                 </DropdownMenuItem>

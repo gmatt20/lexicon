@@ -69,7 +69,8 @@ export default function Account() {
                 onClick={(e) => {
                   e.preventDefault();
                   updateAccount(formData);
-                }}>
+                }}
+              >
                 Update Me
               </Button>
             </DialogClose>

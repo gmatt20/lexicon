@@ -73,7 +73,7 @@ export function DashSidebar() {
   };
   const FormAction = async (
     e: React.FormEvent<HTMLFormElement>,
-    convoId: number
+    convoId: number,
   ) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -124,7 +124,8 @@ export function DashSidebar() {
                       convos.map((convo, i) => (
                         <SidebarMenuSubItem
                           className="flex justify-between"
-                          key={i}>
+                          key={i}
+                        >
                           <Link href={`/dashboard/${convo.id}`}>
                             {convo.title}
                           </Link>
@@ -149,7 +150,8 @@ export function DashSidebar() {
                                     </DialogTitle>
                                   </DialogHeader>
                                   <form
-                                    onSubmit={(e) => FormAction(e, convo.id)}>
+                                    onSubmit={(e) => FormAction(e, convo.id)}
+                                  >
                                     <div className="grid gap-4">
                                       <div className="grid gap-3">
                                         <Label htmlFor="name">
@@ -199,7 +201,8 @@ export function DashSidebar() {
                                         variant="destructive"
                                         onClick={() =>
                                           deleteConvoById(convo.id)
-                                        }>
+                                        }
+                                      >
                                         Delete
                                       </Button>
                                     </DialogClose>
@@ -230,7 +233,8 @@ export function DashSidebar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 side="top"
-                className="w-[--radix-popper-anchor-width]">
+                className="w-[--radix-popper-anchor-width]"
+              >
                 <Dialog>
                   <DialogTrigger asChild>
                     <span className="hover:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">

@@ -67,7 +67,7 @@ export function useConversations() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({ title }),
-          }
+          },
         );
         if (!response.ok) throw new Error("Not authenticated");
         const updatedConvos = convos.map((convo) => {
@@ -85,7 +85,7 @@ export function useConversations() {
         toast("Error renaming conversation, try again later.");
       }
     },
-    [convos]
+    [convos],
   );
 
   const deleteConvoById = useCallback(
@@ -97,7 +97,7 @@ export function useConversations() {
           {
             method: "DELETE",
             credentials: "include",
-          }
+          },
         );
         if (!response.ok) throw new Error("Not authenticated");
         const updatedConvos = convos.filter((convo) => convo.id !== id);
@@ -111,7 +111,7 @@ export function useConversations() {
         setLoading(false);
       }
     },
-    [convos, router]
+    [convos, router],
   );
 
   const deleteConvos = useCallback(async () => {
@@ -131,7 +131,7 @@ export function useConversations() {
         setConvos([]);
       } catch (error) {
         toast(
-          "Error deleting all conversations on the server side, try again later."
+          "Error deleting all conversations on the server side, try again later.",
         );
         setError(error as Error);
       } finally {
