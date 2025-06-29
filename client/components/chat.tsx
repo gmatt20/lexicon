@@ -3,6 +3,8 @@
 import ChatBubble from "@/components/ChatBubble";
 import InputChat from "@/components/InputChat";
 import { useMessages } from "@/hooks/useMessages";
+import { ChatMessage } from "@/types/ChatMessage";
+import { useState } from "react";
 
 export default function Chat() {
   const {
@@ -12,7 +14,9 @@ export default function Chat() {
     handleTextMessage,
     latestMessageRef,
     deleteMessageById,
+    editMessageById,
   } = useMessages();
+  const [editContent, setEditContent] = useState<string>("");
 
   return (
     <>
@@ -28,6 +32,10 @@ export default function Chat() {
               msg={msg}
               key={i}
               onDelete={() => deleteMessageById(msg.id, msg.conversation_id)}
+              onEdit={() => {
+                setEditContent(msg.content);
+                editMessageById(msg.id, msg.conversation_id, editContent);
+              }}
             />
           ))}
         <div ref={latestMessageRef} />
@@ -35,7 +43,7 @@ export default function Chat() {
       <form
         className="absolute bottom-0 left-0 right-0 bg-white p-4 border-t z-10"
         onSubmit={handleTextMessage}>
-        <InputChat />
+        <InputChat editContent={editContent} />
       </form>
     </>
   );

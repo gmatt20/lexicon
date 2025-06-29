@@ -2,16 +2,27 @@
 
 import { Input } from "@/components/ui/inputMsg";
 
-export default function InputChat() {
+export default function InputChat(editContent?: string) {
   return (
     <div className="w-full bg-white p-0">
-      <Input
-        type="text"
-        name="messageText"
-        id="messageText"
-        autoComplete="off"
-        placeholder="Type your message..."
-      />
+      {editContent ? (
+        <Input
+          type="text"
+          name="messageText"
+          id="messageText"
+          autoComplete="off"
+          value={editContent}
+          placeholder="Edit your message..."
+        />
+      ) : (
+        <Input
+          type="text"
+          name="messageText"
+          id="messageText"
+          autoComplete="off"
+          placeholder={editContent}
+        />
+      )}
     </div>
   );
 }
