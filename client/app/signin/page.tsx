@@ -7,7 +7,8 @@ export default function SignInPage() {
   return (
     <div
       className="w-screen h-screen"
-      style={{ backgroundImage: `url(${Abstract.src})` }}>
+      style={{ backgroundImage: `url(${Abstract.src})` }}
+    >
       <AuthForm method="sign-in" />
     </div>
   );
