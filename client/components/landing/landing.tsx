@@ -2,7 +2,7 @@
 
 import Lexicon from "@/public/lexicon.webp";
 import Image from "next/image";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { redirect } from "next/navigation";
 
 export default function Landing() {

@@ -1,7 +1,7 @@
 "use client";
 
 import Abstract from "@/public/milad-fakurian-E8Ufcyxz514-unsplash.webp";
-import AuthForm from "@/components/Forms/AuthForm";
+import AuthForm from "@/components/forms/AuthForm";
 
 export default function SignInPage() {
   return (
