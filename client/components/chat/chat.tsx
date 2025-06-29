@@ -1,7 +1,7 @@
 "use client";
 
-import ChatBubble from "@/components/ChatBubble";
-import InputChat from "@/components/InputChat";
+import ChatBubble from "@/components/chat/ChatBubble";
+import InputChat from "@/components/chat/InputChat";
 import { useMessages } from "@/hooks/useMessages";
 import { useState } from "react";
 
