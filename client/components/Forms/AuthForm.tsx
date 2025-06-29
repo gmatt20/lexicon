@@ -1,7 +1,7 @@
 import { useAuthentication } from "@/hooks/useAuthentication";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import AuthInput from "@/components/Forms/AuthInput";
+import AuthInput from "@/components/AuthInput";
 import { AuthMethod } from "@/types/AuthMethod";
 
 interface AuthFormProps {

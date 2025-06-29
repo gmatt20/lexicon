@@ -3,7 +3,6 @@
 import ChatBubble from "@/components/ChatBubble";
 import InputChat from "@/components/InputChat";
 import { useMessages } from "@/hooks/useMessages";
-import { ChatMessage } from "@/types/ChatMessage";
 import { useState } from "react";
 
 export default function Chat() {
