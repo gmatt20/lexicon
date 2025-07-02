@@ -19,7 +19,7 @@ export default function Chat() {
 
   return (
     <>
-      <div className=" overflow-y-auto py-10 pb-32">
+      <div className="bg-background overflow-y-auto py-10 pb-32 font-light">
         {error && (
           <div className="text-center text-red-500">
             {error.message || "Something went wrong"}
@@ -40,9 +40,8 @@ export default function Chat() {
         <div ref={latestMessageRef} />
       </div>
       <form
-        className="absolute bottom-0 left-0 right-0 bg-white p-4 border-t z-10"
-        onSubmit={handleTextMessage}
-      >
+        className="absolute bottom-0 left-0 right-0 p-4 border-t z-10"
+        onSubmit={handleTextMessage}>
         <InputChat editContent={editContent} />
       </form>
     </>

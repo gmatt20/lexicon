@@ -27,7 +27,7 @@ export function DashSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar variant="floating" collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Lexicon</SidebarGroupLabel>

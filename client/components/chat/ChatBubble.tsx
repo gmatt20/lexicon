@@ -23,11 +23,11 @@ export default function ChatBubble({ msg, onDelete, onEdit }: Props) {
     <div className="flex flex-col justify-between">
       {msg.role === "user" ? (
         <div className="flex justify-end items-end my-5">
-          <Card className="bg-primary-foreground text-black max-w-[60%] inline">
+          <Card className="max-w-[60%] inline">
             <CardContent>
               <ContextMenu>
                 <ContextMenuTrigger>
-                  <p className="leading-6 text-sm">{msg.content}</p>
+                  <p className="leading-7 text-sm">{msg.content}</p>
                 </ContextMenuTrigger>
                 <ContextMenuContent>
                   <ContextMenuItem onClick={onEdit}>Edit</ContextMenuItem>
@@ -47,9 +47,9 @@ export default function ChatBubble({ msg, onDelete, onEdit }: Props) {
             <AvatarImage src={Lexicon.src} />
             <AvatarFallback>LX</AvatarFallback>
           </Avatar>
-          <Card className="bg-primary text-white max-w-[60%]">
+          <Card className="max-w-[60%]">
             <CardContent>
-              <p className="leading-6 text-sm">{msg.content}</p>
+              <p className="leading-7 text-sm">{msg.content}</p>
             </CardContent>
           </Card>
         </div>

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/inputMsg";
 
 export default function InputChat(editContent?: string) {
   return (
-    <div className="w-full bg-white p-0">
+    <div className="w-full bg-background p-0">
       {editContent ? (
         <Input
           type="text"

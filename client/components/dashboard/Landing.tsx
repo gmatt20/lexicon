@@ -9,7 +9,7 @@ const Landing = () => {
   return (
     <div className="w-full h-full flex items-center justify-center flex-col gap-5">
       <p className="font-bold text-4xl font-montserrat">Welcome to Lexicon</p>
-      <Button onClick={newConvo}>Start a New Chat</Button>
+      <Button className="font-light" onClick={newConvo}>Start a New Chat</Button>
     </div>
   );
 };

@@ -14,7 +14,7 @@ const AuthInput = ({ label, type, value, name, onChange }: AuthInputProps) => {
     <>
       <Label htmlFor={label}>{label}</Label>
       <Input
-        className="mb-5"
+        className="my-5"
         required
         type={type}
         name={name}

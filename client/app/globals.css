@@ -1,14 +1,41 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-@theme{
+@theme {
   --font-montserrat: "Montserrat", "sans-serif";
   --font-lexend: "Lexend", "sans-serif";
+  /** Base colors */
+  --color-dark-a0: #000000;
+  --color-light-a0: #ffffff;
+
+  /** Theme primary colors */
+  --color-primary-a0: #3e4e4e;
+  --color-primary-a10: #516060;
+  --color-primary-a20: #657272;
+  --color-primary-a30: #798585;
+  --color-primary-a40: #8e9898;
+  --color-primary-a50: #a4acac;
+
+  /** Theme surface colors */
+  --color-surface-a0: #121212;
+  --color-surface-a10: #282828;
+  --color-surface-a20: #3f3f3f;
+  --color-surface-a30: #575757;
+  --color-surface-a40: #717171;
+  --color-surface-a50: #8b8b8b;
+
+  /** Theme tonal surface colors */
+  --color-surface-tonal-a0: #171818;
+  --color-surface-tonal-a10: #2c2d2d;
+  --color-surface-tonal-a20: #434444;
+  --color-surface-tonal-a30: #5b5b5b;
+  --color-surface-tonal-a40: #747474;
+  --color-surface-tonal-a50: #8e8f8f;
 }
 
 @theme inline {

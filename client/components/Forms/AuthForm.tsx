@@ -26,7 +26,7 @@ const AuthForm = ({ method }: AuthFormProps) => {
 
   return (
     <div className="flex items-center justify-center flex-col h-full">
-      <div className="min-w-[50%] max-w-[30%] shadow-lg flex items-center justify-center flex-col bg-white py-10 rounded-2xl">
+      <div className="min-w-[50%] max-w-[30%] shadow-lg flex items-center justify-center flex-col py-10 rounded-2xl border-2 border-accent">
         <div>
           <p className="text-4xl">
             {method === "sign-in" ? "Sign in" : "Sign up"}
@@ -35,8 +35,7 @@ const AuthForm = ({ method }: AuthFormProps) => {
         <form
           onSubmit={(e) =>
             method === "sign-in" ? signIn(formData)(e) : signUp(formData)(e)
-          }
-        >
+          }>
           <div className="flex flex-col items-center justify-center p-5">
             <div>
               {method === "sign-up" && (
