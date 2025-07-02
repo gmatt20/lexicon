@@ -2,12 +2,9 @@
 
 import {
   Home,
-  SquarePen,
   CircleUser,
-  MessageSquare,
   User2,
   ChevronUp,
-  ChevronRight,
   Lock,
 } from "lucide-react";
 
@@ -20,15 +17,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,20 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthentication } from "@/hooks/useAuthentication";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Spinner } from "@heroui/spinner";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 
 export function SettingsSidebar() {
   const router = useRouter();
@@ -68,7 +45,7 @@ export function SettingsSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar variant="floating" collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Settings</SidebarGroupLabel>
