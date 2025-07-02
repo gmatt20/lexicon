@@ -60,20 +60,3 @@ def delete_message(conversation_id: int, message_id: int, session: SessionDep, u
     session.commit()
 
     return {"message": "Message deleted successfully"}
-
-@router.patch("/{conversation_id}/{message_id}", status_code=status.HTTP_200_OK, response_model=Message)
-def edit_message(conversation_id: int, message_id: int, message_data: MessageCreate, session: SessionDep, user_data=Depends(verify_token)) -> Message:
-  user = query_user(user_data["sub"], session)
-  if message_data.role is not "user":
-      raise HTTPException(status_code=400, detail="Only user role messages can be edited")
-
-  message = session.exec(select(Message).where(Message.id == message_id, Message.user_id == user.id, Message.conversation_id == conversation_id)).first()
-  if not message:
-      raise HTTPException(status_code=404, detail="Message not found")
-
-  message.content = message_data.content
-  session.add(message)
-  session.commit()
-  session.refresh(message)
-
-  return message

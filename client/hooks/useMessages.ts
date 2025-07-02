@@ -73,40 +73,6 @@ export function useMessages() {
     [],
   );
 
-  const editMessageById = useCallback(
-    async (messageID: number, conversationId: number, newContent: string) => {
-      try {
-        const response = await fetch(
-          `http://localhost:8000/messages/${conversationId}/${messageID}`,
-          {
-            method: "PATCH",
-            credentials: "include",
-            body: JSON.stringify({
-              conversation_id: conversationId,
-              role: "user",
-              content: newContent,
-            }),
-          },
-        );
-
-        if (!response.ok) throw new Error("Failed to edit message");
-
-        const updatedMessage = await response.json();
-        setMessages((prevMessages) =>
-          prevMessages.map((message) =>
-            message.id === messageID
-              ? { ...message, content: updatedMessage.content }
-              : message,
-          ),
-        );
-      } catch (error) {
-        console.error("Error editing message:", error);
-        setError(error as Error);
-      }
-    },
-    [],
-  );
-
   // Set up websocket
   useLexWebSocket({ conversationId: Number(conversationID), setMessages }, ws);
   const handleTextMessage = useHandleTextMessage(ws, setMessages);
@@ -118,7 +84,6 @@ export function useMessages() {
   return {
     messages,
     deleteMessageById,
-    editMessageById,
     error,
     loading: loading || userLoading,
     handleTextMessage,
