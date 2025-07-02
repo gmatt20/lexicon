@@ -19,8 +19,8 @@ export default function Security() {
   console.log(user);
 
   return (
-    <>
-      <p>security</p>
+    <div className="mx-3">
+      <p className="text-3xl font-montserrat font-bold mb-5">security</p>
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="destructive">Delete Account</Button>
@@ -45,6 +45,6 @@ export default function Security() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

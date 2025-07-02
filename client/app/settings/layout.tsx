@@ -11,7 +11,7 @@ export default function Layout({
       <SettingsSidebar />
       <main className="flex-1 flex flex-col relative">
         <SidebarTrigger />
-        <div className="mt-10 ml-5">{children}</div>
+        <div>{children}</div>
       </main>
     </SidebarProvider>
   );

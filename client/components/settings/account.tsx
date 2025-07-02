@@ -32,16 +32,18 @@ export default function Account() {
   };
 
   return (
-    <>
-      <p>Account configurations</p>
-      <Label>Username</Label>
+    <div className="mx-3">
+      <p className="text-3xl font-montserrat font-bold mb-5">
+        Account configurations
+      </p>
+      <Label className="my-3">Username</Label>
       <Input
         onChange={handleChange}
         name="username"
         value={formData.username}
         placeholder={user?.username}
       />
-      <Label>Email</Label>
+      <Label className="my-3">Email</Label>
       <Input
         onChange={handleChange}
         name="email"
@@ -50,7 +52,7 @@ export default function Account() {
       />
       <Dialog>
         <DialogTrigger asChild>
-          <Button type="button" variant="outline">
+          <Button className="my-5" type="button" variant="outline">
             Update Me
           </Button>
         </DialogTrigger>
@@ -69,14 +71,13 @@ export default function Account() {
                 onClick={(e) => {
                   e.preventDefault();
                   updateAccount(formData);
-                }}
-              >
+                }}>
                 Update Me
               </Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

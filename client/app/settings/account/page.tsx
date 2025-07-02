@@ -2,7 +2,7 @@ import Account from "@/components/settings/account";
 
 export default function AccountPage() {
   return (
-    <div>
+    <div className="w-full">
       <Account />
     </div>
   );
