@@ -1,4 +1,4 @@
-import { SidebarMenuItem, SidebarMenuButton } from "../ui/sidebar";
+import { SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
 
 type SideBarItemProps = {
   title: string;

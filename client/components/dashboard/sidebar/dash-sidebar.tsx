@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/sidebar";
 import { useConversations } from "@/hooks/useConversations";
 import { useRouter } from "next/navigation";
-import ChatsList from "./ChatsList";
+import ChatsList from "../chats/ChatsList";
 import SidebarItem from "./SidebarItem";
-import SidebarDashFooter from "@/components/dashboard/SidebarDashFooter";
+import SidebarDashFooter from "./SidebarDashFooter";
 
 export function DashSidebar() {
   const router = useRouter();
