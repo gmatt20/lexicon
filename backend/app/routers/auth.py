@@ -83,7 +83,7 @@ def sign_in(user: UserSignIn, response: Response):
         )
 
         return {"message": "Login successful"}
-    
+
     except Exception as e:
         print("ERROR during sign-in:", e)
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -101,7 +101,7 @@ def get_current_user(session: SessionDep, user_data=Depends(verify_token)):
         raise HTTPException(status_code=404, detail="User not found")
    except AuthApiError as e:
     raise HTTPException(status_code=500, detail=f"Supabase error: {e}")
-   
+
    return{
       "id": user.id,
       "username": user.username,
@@ -124,7 +124,7 @@ def update_me(update: UpdateUser, session: SessionDep, user_data=Depends(verify_
           print(response)
         except:
           raise HTTPException(status_code=409, detail="Email is already in use")
-   
+
   user_supabase = supabase.auth.admin.get_user_by_id(supabase_user_id)
   email = user_supabase.user.email
 
@@ -132,7 +132,7 @@ def update_me(update: UpdateUser, session: SessionDep, user_data=Depends(verify_
     user.username = update.username
     session.add(user)
     session.commit()
-    
+
   return {
       "username": user.username,
       "email": email,
@@ -158,7 +158,7 @@ def sign_in_as_guest(guest: GuestReq, session: SessionDep):
   session.add(new_user)
   session.commit()
   session.refresh(new_user)
-  
+
   return {"Signed in as guest": response.user.id}
 
 @router.post("/sign-out", status_code=status.HTTP_200_OK)

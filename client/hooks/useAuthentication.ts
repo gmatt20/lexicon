@@ -165,7 +165,7 @@ export function useAuthentication() {
         {
           method: "DELETE",
           credentials: "include",
-        },
+        }
       );
       if (!response.ok) {
         const error = await response.json();
@@ -180,7 +180,7 @@ export function useAuthentication() {
     } catch (error) {
       toast(
         "Deleting account failed on the server side, please try again later.",
-        {},
+        {}
       );
       console.error(error);
     }
@@ -204,14 +204,14 @@ export function useAuthentication() {
         setError(error.detail);
       } else {
         const result = await response.json();
-        toast(`Successfully update account. 
+        toast(`Successfully update account.
                  username: ${result.username}
                  email: ${result.email}`);
         console.log("Update successful", result);
       }
     } catch (error) {
       toast(
-        "Updating account failed on the server side, please try again later.",
+        "Updating account failed on the server side, please try again later."
       );
       console.error(error);
     }

@@ -32,10 +32,11 @@ export default function Account() {
   };
 
   return (
-    <div className="mx-3">
+    <div className="mx-3 my-10">
       <p className="text-3xl font-montserrat font-bold mb-5">
         Account configurations
       </p>
+      <p className="my-7 text-muted-foreground font-medium text-sm">Update either the username or email</p>
       <Label className="my-3">Username</Label>
       <Input
         onChange={handleChange}

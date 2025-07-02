@@ -26,7 +26,7 @@ const SidebarDashFooter = () => {
   const { user, signOut } = useAuthentication();
   const { deleteConvos } = useConversations();
   const handleSettings = () => {
-    router.push("/settings");
+    router.push("/settings/account");
   };
 
   return (

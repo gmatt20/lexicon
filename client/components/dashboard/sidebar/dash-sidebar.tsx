@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useConversations } from "@/hooks/useConversations";
 import { useRouter } from "next/navigation";
-import ChatsList from "../chats/ChatsList";
+import ChatsList from "../chats-sidebar/ChatsList";
 import SidebarItem from "./SidebarItem";
 import SidebarDashFooter from "./SidebarDashFooter";
 

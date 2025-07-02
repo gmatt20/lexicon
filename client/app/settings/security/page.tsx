@@ -1,5 +1,11 @@
 "use client";
 
-export default function Security() {
-  return <div className="w-full"></div>;
+import Security from "@/components/settings/security/security";
+
+export default function SecurityPage() {
+  return (
+    <div className="w-full">
+      <Security />
+    </div>
+  );
 }

@@ -15,7 +15,7 @@ const Security = () => {
   const { deleteAccount } = useAuthentication();
 
   return (
-    <div className="mx-3">
+    <div className="mx-3 my-10">
       <p className="text-3xl font-montserrat font-bold mb-5">security</p>
       <Dialog>
         <DialogTrigger asChild>
