@@ -20,7 +20,7 @@ export default function Navbar() {
     router.push("/");
   };
   const chatRedirect = () => {
-    router.push("/chat");
+    router.push("/dashboard");
   };
 
   const UserRound: string =
@@ -28,7 +28,9 @@ export default function Navbar() {
 
   return (
     <div className="z-10 w-screen flex justify-between items-center px-5 py-3 fixed top-0">
-      <p onClick={goHome} className="text-3xl">
+      <p
+        onClick={goHome}
+        className="text-3xl cursor-pointer transition ease hover:drop-shadow-[0px_0px_18px_rgba(255,255,255,0.8)]">
         Lexicon
       </p>
       <div className="flex">
