@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import ChatsList from "../chats-sidebar/ChatsList";
 import SidebarItem from "./SidebarItem";
 import SidebarDashFooter from "./SidebarDashFooter";
+import { ThemeToggle } from "@/components/themeToggle";
 
 export function DashSidebar() {
   const router = useRouter();
@@ -33,6 +34,7 @@ export function DashSidebar() {
           <SidebarGroupLabel>Lexicon</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <ThemeToggle />
               <SidebarItem
                 title="New Convo"
                 onClick={newConvo}

@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { useAuthentication } from "@/hooks/useAuthentication";
+import { ThemeToggle } from "./themeToggle";
 
 export default function Navbar() {
   const { user, signOut, loading } = useAuthentication();
@@ -33,7 +34,8 @@ export default function Navbar() {
         className="text-3xl cursor-pointer transition ease hover:drop-shadow-[0px_0px_18px_rgba(255,255,255,0.8)]">
         Lexicon
       </p>
-      <div className="flex">
+      <div className="flex items-center">
+        <ThemeToggle />
         {!loading && user && (
           <>
             <Button onClick={chatRedirect} className="mr-2">

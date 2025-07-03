@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuthentication } from "@/hooks/useAuthentication";
 import { useRouter } from "next/navigation";
+import { ThemeToggle } from "../themeToggle";
 
 export function SettingsSidebar() {
   const router = useRouter();
@@ -51,6 +52,7 @@ export function SettingsSidebar() {
           <SidebarGroupLabel>Settings</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <ThemeToggle />
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <div onClick={handleHome}>
