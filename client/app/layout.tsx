@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { Lexend, Montserrat } from "next/font/google";
+import { Lexend } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const montserrat = Montserrat({
-  subsets: ["latin"],
-});
+// const montserrat = Montserrat({
+//   subsets: ["latin"],
+// });
 const lexend = Lexend({
   subsets: ["latin"],
 });

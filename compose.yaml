@@ -1,0 +1,22 @@
+services:
+  lexicon-backend:
+    build: ./backend
+    container_name: lexicon-backend
+    ports:
+      - "8000:8000"
+    # command: fastapi dev app/main.py
+    volumes:
+      - ./backend:/backend
+
+  lexicon-client:
+    container_name: lexicon-client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+
+    volumes:
+      - ./client/src:/app/src
+      - ./client/public:/app/public
+    restart: always
+    ports:
+      - "3000:3000"

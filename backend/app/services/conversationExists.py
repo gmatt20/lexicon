@@ -1,5 +1,5 @@
-from db.engine import SessionDep
-from models.models import Conversation
+from app.db.engine import SessionDep
+from app.models.models import Conversation
 from sqlmodel import select
 
 def conversation_exists(conversation_id: int, user_id: int, session: SessionDep) -> bool:

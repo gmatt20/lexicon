@@ -13,11 +13,11 @@ const Chats = () => {
   return loading ? (
     <Spinner />
   ) : (
-    convos.map((convo, i) => {
+    convos.map((convo) => {
       const isActive = pathname === `/dashboard/${convo.id}`;
       return (
         <SidebarMenuSubItem
-          key={i}
+          key={convo.id}
           className={cn(
             "flex justify-between items-center p-2 rounded-md transition-colors",
             isActive && "bg-muted"

@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException, Depends
-from db.engine import SessionDep
-from models.models import Conversation
+from app.db.engine import SessionDep
+from app.models.models import Conversation
 from sqlmodel import select
 from pydantic import BaseModel
-from services.jwt_bearer import verify_token
+from app.services.jwt_bearer import verify_token
 from starlette import status
 from datetime import datetime
-from services.query_user import query_user
+from app.services.query_user import query_user
 
 router = APIRouter(
   prefix="/conversations",
@@ -55,11 +55,11 @@ def get_conversation(conversation_id: int, session: SessionDep, user_data=Depend
 @router.put("/{conversation_id}", status_code=status.HTTP_200_OK, response_model=ConversationResponse)
 def update_conversation(conversation_id: int, conversation_title: ConversationTitle, session: SessionDep, user_data=Depends(verify_token)) -> ConversationResponse:
   user = query_user(user_data["sub"], session)
-  
+
   conversation = session.exec(select(Conversation).where(Conversation.id == conversation_id, Conversation.user_id == user.id)).first()
   if not conversation:
     raise HTTPException(status_code=404, detail="Conversation not found")
-  
+
   conversation.title = conversation_title.title
   session.add(conversation)
   session.commit()
@@ -71,7 +71,7 @@ def update_conversation(conversation_id: int, conversation_title: ConversationTi
 @router.delete("/", status_code=status.HTTP_200_OK, response_model=dict)
 def delete_all_conversations(session: SessionDep, user_data=Depends(verify_token)) -> dict:
   user = query_user(user_data["sub"], session)
-  
+
   conversations = session.exec(select(Conversation).where(Conversation.user_id == user.id)).all()
   if not conversations:
     return {"deleted": 0}
@@ -90,7 +90,7 @@ def delete_conversation(conversation_id: int, session: SessionDep, user_data=Dep
     conversation = session.exec(select(Conversation).where(Conversation.id == conversation_id, Conversation.user_id == user.id)).first()
     if not conversation:
       raise HTTPException(status_code=404, detail="Conversation not found")
-    
+
     session.delete(conversation)
     session.commit()
 

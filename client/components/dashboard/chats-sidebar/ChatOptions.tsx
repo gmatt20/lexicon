@@ -86,7 +86,9 @@ const ChatOptions = ({ convo }: { convo: Conversation }) => {
               <DialogClose asChild>
                 <Button
                   variant="destructive"
-                  onClick={() => deleteConvoById(convo.id)}>
+                  onClick={() => {
+                    deleteConvoById(convo.id);
+                  }}>
                   Delete
                 </Button>
               </DialogClose>

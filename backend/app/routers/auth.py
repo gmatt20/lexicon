@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException, Response, Depends
 from fastapi.responses import JSONResponse
 from starlette import status
-from db.engine import SessionDep
+from app.db.engine import SessionDep
 from pydantic import BaseModel
-from models.models import User
-from db.engine import supabase
+from app.models.models import User
+from app.db.engine import supabase
 from sqlmodel import select
-from services.jwt_bearer import verify_token
+from app.services.jwt_bearer import verify_token
 from gotrue.errors import AuthApiError
 
 router = APIRouter(

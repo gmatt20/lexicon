@@ -1,12 +1,12 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketException, Query, status
-from lexAI.lex import Lexercise
-from db.engine import SessionDep
-from models.models import Message
+from app.lexAI.lex import Lexercise
+from app.db.engine import SessionDep
+from app.models.models import Message
 from sqlmodel import Session, select
 from jose import jwt
 from dotenv import load_dotenv
 import os
-from models.models import Conversation, User
+from app.models.models import Conversation, User
 
 load_dotenv()
 
