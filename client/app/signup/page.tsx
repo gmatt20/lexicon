@@ -1,7 +1,7 @@
 "use client";
 
 import Navbar from "@/components/navbar";
-import AuthForm from "@/components/forms/AuthForm";
+import AuthForm from "@/components/Forms/AuthForm";
 
 export default function SignUpForm() {
   return (
