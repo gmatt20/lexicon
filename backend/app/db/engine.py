@@ -7,16 +7,16 @@ from supabase import create_client, Client
 
 load_dotenv()
 
-USER = os.getenv("user")
-PASSWORD = os.getenv("password")
-HOST = os.getenv("host")
-PORT = os.getenv("port")
-DBNAME = os.getenv("dbname")
-
 # Connect with Supabase through client
 key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 url: str = os.environ.get("SUPABASE_URL")
 supabase: Client = create_client(url, key)
+
+USER = os.getenv("SUPAUSER")
+PASSWORD = os.getenv("PASSWORD")
+HOST = os.getenv("HOST")
+PORT = os.getenv("PORT")
+DBNAME = os.getenv("DBNAME")
 
 DATABASE_URL = f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?sslmode=require"
 
