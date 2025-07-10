@@ -10,9 +10,7 @@ export default async function Home() {
   return (
     <>
       <Navbar />
-      <main className="mt-30">
-        <Landing />
-      </main>
+      <Landing />
     </>
   );
 }

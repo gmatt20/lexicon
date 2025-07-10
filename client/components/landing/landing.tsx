@@ -18,7 +18,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="w-screen flex items-center justify-center flex-col">
+    <div className="w-screen flex items-center justify-center flex-col mt-30">
       <Image
         className="relative flex max-w-[20%] shrink-0 overflow-hidden rounded-full"
         src={Lexicon}
@@ -30,7 +30,11 @@ export default function Landing() {
       <p className="my-5 font-montserrat font-bold text-3xl">
         Or Lex for short
       </p>
-      {user ? <Button onClick={handleRedirect}>Chat now</Button> : <Button onClick={handleRedirect}>Chat for free</Button>}
+      {user ? (
+        <Button onClick={handleRedirect}>Chat now</Button>
+      ) : (
+        <Button onClick={handleRedirect}>Chat for free</Button>
+      )}
     </div>
   );
 }
