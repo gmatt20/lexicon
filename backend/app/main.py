@@ -1,7 +1,9 @@
+from app.db import create_db_and_tables
+from app.routers import *
+# from app.routers import messages, conversations, websocket, auth
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.db.engine import create_db_and_tables
-from app.routers import messages, conversations, websocket, auth
 from starlette import status
 
 app = FastAPI()
