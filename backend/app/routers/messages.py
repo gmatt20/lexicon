@@ -2,10 +2,10 @@ from db import SessionDep
 from models import Message
 from services import *
 
-from fastapi import APIRouter, HTTPException, Depends
-from sqlmodel import select
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from starlette import status
+from sqlmodel import select
 
 class MessageCreate(BaseModel):
     conversation_id: int

@@ -1,5 +1,5 @@
-from sqlmodel import Field, SQLModel, Relationship
 from datetime import datetime
+from sqlmodel import Field, Relationship, SQLModel
 
 class User(SQLModel, table=True):
   # Marks the user ID as required in the database

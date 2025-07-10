@@ -1,12 +1,12 @@
 from db import SessionDep
 from models import Conversation
-from services import verify_token, query_user
+from services import query_user, verify_token
 
-from fastapi import APIRouter, HTTPException, Depends
-from sqlmodel import select
-from pydantic import BaseModel
-from starlette import status
 from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from sqlmodel import select
+from starlette import status
 
 router = APIRouter(
   prefix="/conversations",

@@ -1,8 +1,8 @@
-from models import User
 from db import SessionDep
+from models import User
 
-from sqlmodel import select
 from fastapi import HTTPException
+from sqlmodel import select
 
 def query_user(supabase_user_id: str, session: SessionDep) -> User:
     user = session.exec(select(User).where(User.supabase_user_id == supabase_user_id)).first()

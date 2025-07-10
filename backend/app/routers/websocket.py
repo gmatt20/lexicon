@@ -1,12 +1,12 @@
-from lexAI import Lexercise
 from db import SessionDep
+from lexAI import Lexercise
 from models import *
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketException, Query, status
-from sqlmodel import Session, select
-from jose import jwt
 from dotenv import load_dotenv
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketException, Query, status
+from jose import jwt
 import os
+from sqlmodel import select, Session
 
 load_dotenv()
 

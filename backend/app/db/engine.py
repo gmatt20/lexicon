@@ -1,9 +1,9 @@
-from sqlmodel import create_engine, SQLModel, Session
-from fastapi import Depends
-from typing import Annotated
 from dotenv import load_dotenv
+from fastapi import Depends
 import os
-from supabase import create_client, Client
+from sqlmodel import create_engine, Session, SQLModel
+from supabase import Client, create_client
+from typing import Annotated
 
 load_dotenv()
 
