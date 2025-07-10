@@ -1,12 +1,13 @@
+from app.db import SessionDep
+from app.models import User
+from app.db import supabase
+from app.services import verify_token
+
 from fastapi import APIRouter, HTTPException, Response, Depends
 from fastapi.responses import JSONResponse
 from starlette import status
-from app.db.engine import SessionDep
 from pydantic import BaseModel
-from app.models.models import User
-from app.db.engine import supabase
 from sqlmodel import select
-from app.services.jwt_bearer import verify_token
 from gotrue.errors import AuthApiError
 
 router = APIRouter(

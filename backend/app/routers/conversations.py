@@ -1,12 +1,12 @@
+from app.db import SessionDep
+from app.models import Conversation
+from app.services import verify_token, query_user
+
 from fastapi import APIRouter, HTTPException, Depends
-from app.db.engine import SessionDep
-from app.models.models import Conversation
 from sqlmodel import select
 from pydantic import BaseModel
-from app.services.jwt_bearer import verify_token
 from starlette import status
 from datetime import datetime
-from app.services.query_user import query_user
 
 router = APIRouter(
   prefix="/conversations",

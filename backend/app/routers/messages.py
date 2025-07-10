@@ -1,12 +1,11 @@
+from app.db import SessionDep
+from app.models import Message
+from app.services import *
+
 from fastapi import APIRouter, HTTPException, Depends
-from app.db.engine import SessionDep
-from app.models.models import Message
 from sqlmodel import select
-from app.services.conversationExists import conversation_exists
-from app.services.jwt_bearer import verify_token
 from pydantic import BaseModel
 from starlette import status
-from app.services.query_user import query_user
 
 class MessageCreate(BaseModel):
     conversation_id: int
