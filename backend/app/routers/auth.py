@@ -132,8 +132,8 @@ def update_me(update: UpdateUser, session: SessionDep, user_data=Depends(verify_
                 supabase_user_id, {"email": update.email}
             )
             print(response)
-        except:
-            raise HTTPException(status_code=409, detail="Email is already in use")
+        except Exception as e:
+            raise HTTPException(status_code=409, detail=f"Email is already in use {e}")
 
     user_supabase = supabase.auth.admin.get_user_by_id(supabase_user_id)
     email = user_supabase.user.email
