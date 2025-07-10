@@ -1,6 +1,6 @@
-from app.db import SessionDep
-from app.models import Message
-from app.services import *
+from db import SessionDep
+from models import Message
+from services import *
 
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import select

@@ -1,6 +1,6 @@
-from app.db import SessionDep
-from app.models import Conversation
-from app.services import verify_token, query_user
+from db import SessionDep
+from models import Conversation
+from services import verify_token, query_user
 
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import select

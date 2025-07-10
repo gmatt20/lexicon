@@ -1,7 +1,7 @@
-from app.db import SessionDep
-from app.models import User
-from app.db import supabase
-from app.services import verify_token
+from db import SessionDep
+from models import User
+from db import supabase
+from services import verify_token
 
 from fastapi import APIRouter, HTTPException, Response, Depends
 from fastapi.responses import JSONResponse

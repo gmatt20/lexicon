@@ -1,6 +1,6 @@
-from app.lexAI.lex import Lexercise
-from app.db import SessionDep
-from app.models import *
+from lexAI import Lexercise
+from db import SessionDep
+from models import *
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketException, Query, status
 from sqlmodel import Session, select
