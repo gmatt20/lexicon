@@ -1,5 +1,5 @@
 from db import create_db_and_tables
-from routers import *
+from routers import auth, conversations, messages, websocket
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

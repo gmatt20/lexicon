@@ -1,6 +1,10 @@
 from db import SessionDep
 from lexAI import Lexercise
-from models import *
+from models import (
+    Conversation,
+    Message,
+    User,
+)
 
 from dotenv import load_dotenv
 from fastapi import (
