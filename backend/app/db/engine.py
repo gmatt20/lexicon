@@ -18,7 +18,9 @@ HOST = os.getenv("HOST")
 PORT = os.getenv("PORT")
 DBNAME = os.getenv("DBNAME")
 
-DATABASE_URL = f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?sslmode=require"
+DATABASE_URL = (
+    f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?sslmode=require"
+)
 
 engine = create_engine(DATABASE_URL)
 
@@ -28,12 +30,15 @@ try:
 except Exception as e:
     print(f"Failed to connect to Supabase: {e}")
 
+
 def create_db_and_tables():
-  # SQLModel.metadata.drop_all(engine)
-  SQLModel.metadata.create_all(engine)
+    # SQLModel.metadata.drop_all(engine)
+    SQLModel.metadata.create_all(engine)
+
 
 def get_session():
-  with Session(engine) as session:
-    yield session
+    with Session(engine) as session:
+        yield session
+
 
 SessionDep = Annotated[Session, Depends(get_session)]

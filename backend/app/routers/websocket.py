@@ -3,7 +3,14 @@ from lexAI import Lexercise
 from models import *
 
 from dotenv import load_dotenv
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketException, Query, status
+from fastapi import (
+    APIRouter,
+    WebSocket,
+    WebSocketDisconnect,
+    WebSocketException,
+    Query,
+    status,
+)
 from jose import jwt
 import os
 from sqlmodel import select, Session
@@ -15,22 +22,25 @@ ALGORITHM = os.getenv("ALGORITHM")
 
 router = APIRouter()
 
-async def get_cookie(
-      websocket: WebSocket,
-      session: Session
-):
-   token = websocket.cookies.get("access_token")
-   if not token:
+
+async def get_cookie(websocket: WebSocket, session: Session):
+    token = websocket.cookies.get("access_token")
+    if not token:
         raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
-   try:
-        payload = jwt.decode(token, SUPABASE_JWT_SECRET, algorithms=[ALGORITHM], audience="authenticated")
+    try:
+        payload = jwt.decode(
+            token, SUPABASE_JWT_SECRET, algorithms=[ALGORITHM], audience="authenticated"
+        )
         user_id = payload["sub"]
-        user = session.exec(select(User).where(User.supabase_user_id == user_id)).first()
+        user = session.exec(
+            select(User).where(User.supabase_user_id == user_id)
+        ).first()
         if not user:
             raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
         return user
-   except WebSocketException:
+    except WebSocketException:
         raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
+
 
 @router.websocket("/ws/")
 async def ws_endpoint(
@@ -45,8 +55,7 @@ async def ws_endpoint(
 
         conversation = session.exec(
             select(Conversation).where(
-                Conversation.id == conversation_id,
-                Conversation.user_id == user.id
+                Conversation.id == conversation_id, Conversation.user_id == user.id
             )
         ).first()
 
@@ -68,7 +77,7 @@ async def ws_endpoint(
                 user_id=user.id,
                 conversation_id=conversation_id,
                 role="user",
-                content=data
+                content=data,
             )
             session.add(user_message)
             session.commit()
@@ -85,7 +94,7 @@ async def ws_endpoint(
                 user_id=user.id,
                 conversation_id=conversation_id,
                 role="lex",
-                content=LexResponse
+                content=LexResponse,
             )
             session.add(lex_message)
             session.commit()
