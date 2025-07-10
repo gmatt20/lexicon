@@ -1,6 +1,6 @@
-from db import SessionDep
-from models import Message
-from services import conversation_exists, verify_token, query_user
+from app.db import SessionDep
+from app.models import Message
+from app.services import conversation_exists, verify_token, query_user
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel

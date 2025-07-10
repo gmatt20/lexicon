@@ -1,5 +1,5 @@
-from db import SessionDep
-from models import Conversation
+from app.db import SessionDep
+from app.models import Conversation
 
 from sqlmodel import select
 

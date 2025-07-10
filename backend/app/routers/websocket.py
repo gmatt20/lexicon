@@ -1,6 +1,6 @@
-from db import SessionDep
-from lexAI import Lexercise
-from models import (
+from app.db import SessionDep
+from app.lexAI import Lexercise
+from app.models import (
     Conversation,
     Message,
     User,

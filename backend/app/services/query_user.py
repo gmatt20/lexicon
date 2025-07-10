@@ -1,5 +1,5 @@
-from db import SessionDep
-from models import User
+from app.db import SessionDep
+from app.models import User
 
 from fastapi import HTTPException
 from sqlmodel import select
