@@ -2,12 +2,28 @@ from app.db import SessionDep, supabase
 from app.models import User
 from app.services import verify_token
 
+from authlib.integrations.starlette_client import OAuth
 from fastapi import APIRouter, Depends, HTTPException, Response
 from gotrue.errors import AuthApiError
 from starlette import status
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 from sqlmodel import select
+from starlette.requests import Request
+import os
+from starlette.responses import RedirectResponse
+
+oauth = OAuth()
+
+oauth.register(
+    name="google",
+    client_id=os.environ["GOOGLE_CLIENT_ID"],
+    client_secret=os.environ["GOOGLE_CLIENT_SECRET"],
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
+)
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -90,6 +106,16 @@ def sign_in(user: UserSignIn, response: Response):
         print("ERROR during sign-in:", e)
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@router.get("/login/google")
+async def login_via_google(request: Request):
+    redirect_uri = request.url_for("auth_via_google")
+    return await oauth.google.authorize_redirect(request, redirect_uri)
+
+@router.get("/google")
+async def auth_via_google(request: Request):
+    token = await oauth.google.authorize_access_token(request)
+    # user = token["userinfo"]
+    return RedirectResponse(url="http://localhost:3000/dashboard")
 
 @router.get("/me/")
 def get_current_user(session: SessionDep, user_data=Depends(verify_token)):
