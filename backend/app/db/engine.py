@@ -32,7 +32,7 @@ except Exception as e:
 
 
 def create_db_and_tables():
-    # SQLModel.metadata.drop_all(engine)
+    SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)
 
 

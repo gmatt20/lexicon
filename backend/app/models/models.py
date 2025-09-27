@@ -15,7 +15,7 @@ class User(SQLModel, table=True):
     conversations: list["Conversation"] = Relationship(
         back_populates="user", cascade_delete=True
     )
-    email: str | None = Field(default=None)
+    email: str = Field(default=None)
 
 
 class Conversation(SQLModel, table=True):

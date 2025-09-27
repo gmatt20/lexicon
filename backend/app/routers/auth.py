@@ -116,8 +116,21 @@ async def auth_via_google(request: Request, session: SessionDep):
     token = await oauth.google.authorize_access_token(request)
     user_info = token["userinfo"]
     user = session.exec(
-        select(User).where(User.e)
-    )
+        select(User).where(User.email == user_info["email"])
+    ).first()
+    if not user:
+        new_user = User(
+            username=user_info["name"],
+            is_guest=False,
+            email=user_info["email"],
+            supabase_user_id=user_info["sub"],
+            profile_picture=user_info["picture"]
+        )
+
+        session.add(new_user)
+        session.commit()
+        session.refresh(new_user)
+
     return RedirectResponse(url="http://localhost:3000/dashboard")
 
 @router.get("/me/")
