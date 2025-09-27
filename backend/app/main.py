@@ -9,6 +9,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette import status
 import os
 from starlette.requests import Request
+from starlette.responses import RedirectResponse
 
 # Automated tests indicate that "on_event is deprecated,
 # use lifespan event handlers instead."
@@ -66,5 +67,5 @@ async def login_via_google(request: Request):
 @app.get("/auth/google")
 async def auth_via_google(request: Request):
     token = await oauth.google.authorize_access_token(request)
-    user = token["userinfo"]
-    return dict(user)
+    # user = token["userinfo"]
+    return RedirectResponse(url="http://localhost:3000/dashboard")
