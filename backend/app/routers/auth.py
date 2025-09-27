@@ -112,9 +112,12 @@ async def login_via_google(request: Request):
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @router.get("/google")
-async def auth_via_google(request: Request):
+async def auth_via_google(request: Request, session: SessionDep):
     token = await oauth.google.authorize_access_token(request)
-    # user = token["userinfo"]
+    user_info = token["userinfo"]
+    user = session.exec(
+        select(User).where(User.e)
+    )
     return RedirectResponse(url="http://localhost:3000/dashboard")
 
 @router.get("/me/")
