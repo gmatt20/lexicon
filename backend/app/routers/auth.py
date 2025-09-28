@@ -116,15 +116,15 @@ async def auth_via_google(request: Request, session: SessionDep):
     token = await oauth.google.authorize_access_token(request)
     user_info = token["userinfo"]
     user = session.exec(
-        select(User).where(User.email == user_info["email"])
+        select(User).where(User.google_id == user_info["sub"])
     ).first()
     if not user:
         new_user = User(
-            username=user_info["name"],
-            is_guest=False,
+            google_id=user_info["sub"],
             email=user_info["email"],
-            supabase_user_id=user_info["sub"],
-            profile_picture=user_info["picture"]
+            display_name=user_info["name"],
+            profile_picture=user_info["picture"],
+            is_guest=False,
         )
 
         session.add(new_user)
