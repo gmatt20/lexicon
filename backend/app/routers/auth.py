@@ -62,12 +62,10 @@ def sign_up(user: NewUserReq, session: SessionDep, response: Response):
             raise HTTPException(status_code=409, detail="User already registered")
         raise HTTPException(status_code=500, detail=f"Internal server error {e}")
 
-    supabase_user_id = responseSupabase.user.id
     username = user.email.split("@")[0]
 
     new_user = User(
-        supabase_user_id=supabase_user_id,
-        username=user.username or username,
+        display_name=user.username or username,
         is_guest=False,
     )
 
@@ -131,12 +129,17 @@ async def auth_via_google(request: Request, session: SessionDep):
         session.commit()
         session.refresh(new_user)
 
-    return RedirectResponse(url="http://localhost:3000/dashboard")
+    access_token = token["access_token"]
+
+    redirect = RedirectResponse(url="http://localhost:3000/dashboard")
+
+    redirect.set_cookie(key="access_token", value=access_token, httponly=True, secure=True, path="/")
+
+    return redirect
 
 @router.get("/me/")
 def get_current_user(session: SessionDep, user_data=Depends(verify_token)):
     supabase_user_id = user_data["sub"]
-    #  print(f"Supabase User ID: {supabase_user_id}")
 
     try:
         user = session.exec(
