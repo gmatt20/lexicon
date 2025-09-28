@@ -6,8 +6,9 @@ class User(SQLModel, table=True):
     # Marks the user ID as required in the database
     # and the database will generate a unique ID
     id: int | None = Field(default=None, primary_key=True)
-    supabase_user_id: str = Field(index=True, unique=True)
-    username: str | None = Field(default=None)
+    google_id: str | None = Field(default=None, unique=True)
+    email: str = Field(nullable=False, unique=True)
+    display_name: str | None = Field(default=None)
     profile_picture: str | None = Field(default=None)
     is_guest: bool = Field(default=False)
     # Relationships
@@ -15,7 +16,6 @@ class User(SQLModel, table=True):
     conversations: list["Conversation"] = Relationship(
         back_populates="user", cascade_delete=True
     )
-    email: str = Field(default=None)
 
 
 class Conversation(SQLModel, table=True):
