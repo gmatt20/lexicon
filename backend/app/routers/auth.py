@@ -133,31 +133,34 @@ async def auth_via_google(request: Request, session: SessionDep):
 
     redirect = RedirectResponse(url="http://localhost:3000/dashboard")
 
-    redirect.set_cookie(key="access_token", value=access_token, httponly=True, secure=True, path="/")
+    redirect.set_cookie(key="access_token", value=access_token, httponly=True, secure=False, samesite="lax" )
 
     return redirect
 
 @router.get("/me/")
-def get_current_user(session: SessionDep, user_data=Depends(verify_token)):
-    supabase_user_id = user_data["sub"]
+async def get_current_user(session: SessionDep, request: Request):
+    token = request.cookies.get("access_token")
+
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
 
     try:
-        user = session.exec(
-            select(User).where(User.supabase_user_id == supabase_user_id)
-        ).first()
-        user_supabase = supabase.auth.admin.get_user_by_id(supabase_user_id)
-        email = user_supabase.user.email
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-    except AuthApiError as e:
-        raise HTTPException(status_code=500, detail=f"Supabase error: {e}")
+        idinfo = oauth.verify_oauth2_token(token)
+        google_id = idinfo["sub"]
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Invalid ID token: {e}")
+
+    user = session.exec(select(User).where(User.google_id == google_id)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
 
     return {
         "id": user.id,
-        "username": user.username,
-        "is_guest": user.is_guest,
-        "email": email,
+        "email": user.email,
+        "username": user.display_name,
+        "profile_picture": user.profile_picture,
     }
+
 
 
 @router.put("/update-me", status_code=status.HTTP_200_OK)

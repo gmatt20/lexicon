@@ -25,7 +25,7 @@ export function useAuthentication() {
             "Content-Type": "application/json",
           },
         });
-        if (!response.ok) throw new Error("Not authenticated");
+        if (!response.ok) throw new Error(response.statusText);
         const data = await response.json();
         setUser(data);
       } catch (error) {
